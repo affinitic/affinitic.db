@@ -1,0 +1,31 @@
+Just testing to add and retrieve an animal
+
+    >>> from affinitic.db.tests.pgtest import Animal
+    >>> from zope.component import getUtility
+    >>> from affinitic.db.interfaces import IDatabase
+    >>> db = getUtility(IDatabase, name='postgres')
+    >>> db
+    <affinitic.db.tests.pgtest.MyPGDB object at ...>
+    >>> session = db.session
+    >>> session
+    <sqlalchemy.orm.session.Sess object at ...>
+
+    >>> session.query(Animal).all()
+    []
+
+    >>> beef = Animal()
+    >>> beef.animal_name = 'Beef'
+
+    >>> session.save(beef)
+    >>> session.query(Animal).all()
+    []
+    >>> session.flush()
+    >>> session.query(Animal).all()
+    [<affinitic.db.tests.pgtest.Animal object at ...>]
+
+Let's refresh::
+
+    >>> db.refresh()
+    >>> session.query(Animal).all()
+    []
+
