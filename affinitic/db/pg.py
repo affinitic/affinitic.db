@@ -11,6 +11,9 @@ $Id$
 from affinitic.db.event import PGDBInitialized
 from affinitic.db.db import DB
 import grokcore.component as grok
+import os
+
+USER = os.popen('whoami').read().strip()
 
 
 class PGDB(DB):
@@ -20,4 +23,4 @@ class PGDB(DB):
 
     @property
     def url(self):
-        return 'postgres://jfroche:%s@localhost:5432/arsia' % self.urlPass
+        return 'postgres://%s:%s@localhost:5432/arsia' % (USER, self.urlPass)
