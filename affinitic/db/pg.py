@@ -20,7 +20,9 @@ class PGDB(DB):
     grok.name('postgres')
     notifyInterface = PGDBInitialized
     passFile = 'pgpass'
+    db = None
 
     @property
     def url(self):
-        return 'postgres://%s:%s@localhost:5432/arsia' % (USER, self.urlPass)
+        return 'postgres://%s:%s@localhost:5432/%s' % (USER, self.urlPass,
+                                                       self.db)
