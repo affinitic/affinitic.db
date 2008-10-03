@@ -15,6 +15,10 @@ class IPGDBInitialized(IObjectEvent):
     """DBInitialized event"""
 
 
+class IOracleDBInitialized(IObjectEvent):
+    """DBInitialized event"""
+
+
 class IMetadata(Interface):
     """
     """

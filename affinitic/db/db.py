@@ -8,7 +8,7 @@ Copyright by Affinitic sprl
 $Id$
 """
 from sqlalchemy import create_engine, MetaData
-from sqlalchemy.orm import clear_mappers, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from zope.interface import classImplements
 from affinitic.db.interfaces import IMetadata, IDatabase
 from zope.event import notify
@@ -42,7 +42,6 @@ class DB(grok.GlobalUtility):
         self.metadata = MetaData(self.engine)
 
     def setMappers(self):
-        clear_mappers()
         self.metadata.clear()
         classImplements(MetaData, IMetadata)
         notify(self.notifyInterface(self.metadata))
