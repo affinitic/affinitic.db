@@ -21,6 +21,7 @@ class DB(grok.GlobalUtility):
     grok.implements(IDatabase)
     notifyInterface = None
     passFile = ''
+    forceUnicode = False
 
     def __init__(self):
         self.connect()
@@ -37,7 +38,12 @@ class DB(grok.GlobalUtility):
         return fileContent.strip()
 
     def connect(self):
-        self.engine = create_engine(self.url)
+        if self.forceUnicode:
+            self.engine = create_engine(self.url,
+                                        convert_unicode=True,
+                                        encoding='utf-8')
+        else:
+            self.engine = create_engine(self.url)
         self.db = self.engine.connect()
         self.metadata = MetaData(self.engine)
 
