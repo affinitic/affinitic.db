@@ -33,4 +33,4 @@ setup(name='affinitic.db',
       ],
       entry_points={
             'console_scripts': [
-                'test = affinitic.db.tests.testrunner:main']})
+                'test = affinitic.db.tests.runalltests:main']})
