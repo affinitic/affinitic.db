@@ -24,6 +24,7 @@ class DB(grok.GlobalUtility):
     forceUnicode = False
     verbose = False
     createAll = True
+    encoding = 'utf-8'
 
     def __init__(self):
         self.connect()
@@ -44,7 +45,7 @@ class DB(grok.GlobalUtility):
             self.engine = create_engine(self.url,
                                         convert_unicode=True,
                                         echo=self.verbose,
-                                        encoding='utf-8')
+                                        encoding=self.encoding)
         else:
             self.engine = create_engine(self.url,
                                         echo=self.verbose)
