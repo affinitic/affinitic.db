@@ -8,7 +8,8 @@ Copyright by Affinitic sprl
 $Id$
 """
 from zope.interface import implements
-from affinitic.db.interfaces import IPGDBInitialized, IOracleDBInitialized
+from affinitic.db.interfaces import IPGDBInitialized, IOracleDBInitialized, \
+                                    IMSSqlDBInitialized
 
 
 class PGDBInitialized(object):
@@ -20,6 +21,13 @@ class PGDBInitialized(object):
 
 class OracleDBInitialized(object):
     implements(IOracleDBInitialized)
+
+    def __init__(self, objectToAdapt):
+        self.object = objectToAdapt
+
+
+class MSSqlDBInitialized(object):
+    implements(IMSSqlDBInitialized)
 
     def __init__(self, objectToAdapt):
         self.object = objectToAdapt

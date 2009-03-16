@@ -23,6 +23,7 @@ class DB(grok.GlobalUtility):
     passFile = ''
     forceUnicode = False
     verbose = False
+    createAll = True
 
     def __init__(self):
         self.connect()
@@ -54,7 +55,8 @@ class DB(grok.GlobalUtility):
         self.metadata.clear()
         classImplements(MetaData, IMetadata)
         notify(self.notifyInterface(self.metadata))
-        self.metadata.create_all(checkfirst=True)
+        if self.createAll:
+            self.metadata.create_all(checkfirst=True)
         self.configuredMappers = True
 
     @property

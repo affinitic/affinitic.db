@@ -19,6 +19,10 @@ class IOracleDBInitialized(IObjectEvent):
     """DBInitialized event"""
 
 
+class IMSSqlDBInitialized(IObjectEvent):
+    """DBInitialized event"""
+
+
 class IMetadata(Interface):
     """
     """
