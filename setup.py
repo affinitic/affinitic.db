@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.2dev'
+version = '0.2'
 
 setup(name='affinitic.db',
       version=version,
@@ -24,7 +24,7 @@ setup(name='affinitic.db',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'sqlalchemy>=0.4,<0.5beta',
+          'sqlalchemy',
           'grokcore.component',
           'zope.testing',
           'zope.security',

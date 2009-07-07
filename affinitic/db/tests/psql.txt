@@ -8,7 +8,7 @@ Just testing to add and retrieve an animal
     <affinitic.db.tests.pgtest.MyPGDB object at ...>
     >>> session = db.session
     >>> session
-    <sqlalchemy.orm.session.Sess object at ...>
+    <sqlalchemy.orm.session.Session object at ...>
 
     >>> session.query(Animal).all()
     []
@@ -16,7 +16,7 @@ Just testing to add and retrieve an animal
     >>> beef = Animal()
     >>> beef.animal_name = 'Beef'
 
-    >>> session.save(beef)
+    >>> session.add(beef)
     >>> session.query(Animal).all()
     []
     >>> session.flush()
