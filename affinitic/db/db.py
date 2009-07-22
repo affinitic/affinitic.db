@@ -72,7 +72,7 @@ class DB(grok.GlobalUtility):
     def session(self):
         self._checkMappers()
         return sessionmaker(bind=self.engine, autoflush=False,
-                            autocommit=True)()
+                            transactional=True)()
 
     @property
     def connection(self):
