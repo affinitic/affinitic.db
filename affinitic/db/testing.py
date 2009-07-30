@@ -9,30 +9,25 @@ $Id$
 """
 from unittest import TestCase
 from zope.component import getUtility, getUtilitiesFor
-from zope.configuration.config import ConfigurationMachine
-from zope.configuration import xmlconfig
 from affinitic.db.interfaces import IDatabase
+from zope.app.testing.functional import ZCMLLayer as _ZCMLLayer
+from sqlalchemy.orm import clear_mappers
 
 
-def dbSetup(config_file, package):
-    config = ConfigurationMachine()
-    context = xmlconfig._getContext()
-    xmlconfig.include(context, config_file, package)
-    context.execute_actions()
-    for name, utility in getUtilitiesFor(IDatabase):
-        utility.setMappers()
+class ZCMLLayer(_ZCMLLayer):
 
-
-class ZCMLLayer:
-
-    def __init__(self, config_file, module, name, allow_teardown=False):
-        self.config_file = config_file
-        self.__module__ = module
-        self.__name__ = name
-        self.allow_teardown = allow_teardown
+    def __init__(self, *args, **kwargs):
+        kwargs['allow_teardown'] = True
+        _ZCMLLayer.__init__(self, *args, **kwargs)
 
     def setUp(self):
-        dbSetup(self.config_file, self.__module__)
+        _ZCMLLayer.setUp(self)
+        for name, utility in getUtilitiesFor(IDatabase):
+            utility.setMappers()
+
+    def tearDown(self):
+        _ZCMLLayer.tearDown(self)
+        clear_mappers()
 
 
 class BaseTestCase(TestCase):
