@@ -9,15 +9,15 @@ $Id$
 """
 from zope.testing import doctest
 import unittest
-import affinitic.db.tests
 from zope.component import getUtilitiesFor
-from affinitic.db.testing import dbSetup
 from affinitic.db.interfaces import IDatabase
 from sqlalchemy.orm import clear_mappers
+from Products.Five import zcml
 
 
 def setUp(self):
-    dbSetup('psqltesting.zcml', affinitic.db.tests)
+    import affinitic.db.tests
+    zcml.load_config('psqltesting.zcml', affinitic.db.tests)
     for name, utility in getUtilitiesFor(IDatabase):
         utility.metadata.create_all()
 
