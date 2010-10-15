@@ -7,6 +7,7 @@ Copyright by Affinitic sprl
 
 $Id$
 """
+import sqlalchemy
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from zope.interface import classImplements
@@ -15,6 +16,11 @@ from zope.event import notify
 import os
 import sys
 import grokcore.component as grok
+
+
+SA_0_5_andmore = sqlalchemy.__version__ == 'svn' \
+    or (int(sqlalchemy.__version__.split('.')[:2][0]) >= 0
+        and int(sqlalchemy.__version__.split('.')[:2][1]) >= 5)
 
 
 class DB(grok.GlobalUtility):
@@ -28,7 +34,7 @@ class DB(grok.GlobalUtility):
 
     def __init__(self):
         self.connect()
-        self.configuredMappers= False
+        self.configuredMappers = False
 
     @property
     def urlPass(self):
@@ -71,8 +77,11 @@ class DB(grok.GlobalUtility):
     @property
     def session(self):
         self._checkMappers()
-        return sessionmaker(bind=self.engine, autoflush=False,
-                            transactional=True)()
+        if SA_0_5_andmore:
+            return sessionmaker(bind=self.engine, autoflush=False, autocommit=False)()
+        else:
+            return sessionmaker(bind=self.engine, autoflush=False,
+                                transactional=True)()
 
     @property
     def connection(self):
