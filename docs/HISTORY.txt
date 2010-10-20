@@ -1,10 +1,14 @@
 Changelog
 =========
 
-0.2.4 (unreleased)
+0.2.4 (2010-10-20)
 ------------------
 
-- Nothing changed yet.
+- fix for SA 0.6
+
+- moving to src folder for making testrunner happy
+
+- fix test
 
 
 0.2.3 (2009-08-06)
