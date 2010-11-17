@@ -7,14 +7,14 @@ Copyright by Affinitic sprl
 
 $Id$
 """
+import os
+import sys
 import sqlalchemy
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from zope.interface import classImplements
 from affinitic.db.interfaces import IMetadata, IDatabase
 from zope.event import notify
-import os
-import sys
 import grokcore.component as grok
 
 
@@ -31,6 +31,8 @@ class DB(grok.GlobalUtility):
     verbose = False
     createAll = True
     encoding = 'utf-8'
+    _session = None
+    persistentSession = False
 
     def __init__(self):
         self.connect()
@@ -77,11 +79,16 @@ class DB(grok.GlobalUtility):
     @property
     def session(self):
         self._checkMappers()
+        if self.persistentSession and self._session:
+            return self._session
         if SA_0_5_andmore:
-            return sessionmaker(bind=self.engine, autoflush=False, autocommit=False)()
+            sess = sessionmaker(bind=self.engine, autoflush=False)()
         else:
-            return sessionmaker(bind=self.engine, autoflush=False,
+            sess = sessionmaker(bind=self.engine, autoflush=False,
                                 transactional=True)()
+        if self.persistentSession:
+            self._session = sess
+        return sess
 
     @property
     def connection(self):
