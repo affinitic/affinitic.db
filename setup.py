@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.2.5dev'
+version = '0.2.5'
 
 setup(name='affinitic.db',
       version=version,
