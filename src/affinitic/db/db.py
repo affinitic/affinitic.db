@@ -16,6 +16,7 @@ from zope.interface import classImplements
 from affinitic.db.interfaces import IMetadata, IDatabase
 from zope.event import notify
 import grokcore.component as grok
+from zope.sqlalchemy import ZopeTransactionExtension
 
 
 SA_0_5_andmore = sqlalchemy.__version__ == 'svn' \
@@ -33,6 +34,7 @@ class DB(grok.GlobalUtility):
     encoding = 'utf-8'
     _session = None
     persistentSession = False
+    withZope = False
 
     def __init__(self):
         self.connect()
@@ -82,7 +84,12 @@ class DB(grok.GlobalUtility):
         if self.persistentSession and self._session:
             return self._session
         if SA_0_5_andmore:
-            sess = sessionmaker(bind=self.engine, autoflush=False)()
+            extension = None
+            if self.withZope:
+                extension = ZopeTransactionExtension()
+            sess = sessionmaker(bind=self.engine, autoflush=False,
+                                extension=extension,
+                                )()
         else:
             sess = sessionmaker(bind=self.engine, autoflush=False,
                                 transactional=True)()

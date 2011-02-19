@@ -30,7 +30,8 @@ setup(name='affinitic.db',
           'zope.testing',
           'zope.security',
           # -*- Extra requirements: -*-
-          'pysqlite'
+          'pysqlite',
+          'zope.sqlalchemy',
       ],
       entry_points={
             'console_scripts': [
