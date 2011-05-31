@@ -37,7 +37,6 @@ class DB(grok.GlobalUtility):
     withZope = False
 
     def __init__(self):
-        self.connect()
         self.configuredMappers = False
 
     @property
@@ -76,6 +75,7 @@ class DB(grok.GlobalUtility):
 
     def _checkMappers(self):
         if not self.configuredMappers:
+            self.connect()
             self.setMappers()
 
     @property
