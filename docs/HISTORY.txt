@@ -4,7 +4,7 @@ Changelog
 0.5 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix if there was no connection previously, no metadata
 
 
 0.4 (2011-05-31)

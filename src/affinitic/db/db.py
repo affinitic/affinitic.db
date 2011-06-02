@@ -62,7 +62,8 @@ class DB(grok.GlobalUtility):
         self.metadata = MetaData(self.engine)
 
     def setMappers(self):
-        self.metadata.clear()
+        if hasattr(self, 'metadata'):
+            self.metadata.clear()
         classImplements(MetaData, IMetadata)
         notify(self.notifyInterface(self.metadata))
         if self.createAll:
