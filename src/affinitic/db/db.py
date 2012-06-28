@@ -58,7 +58,6 @@ class DB(grok.GlobalUtility):
         else:
             self.engine = create_engine(self.url,
                                         echo=self.verbose)
-        self.db = self.engine.connect()
         self.metadata = MetaData(self.engine)
 
     def setMappers(self):
