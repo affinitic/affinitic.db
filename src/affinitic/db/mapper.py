@@ -2,6 +2,7 @@
 import sqlalchemy as sa
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
+from affinitic.db.utils import disable_sa_deprecation_warnings, enable_sa_deprecation_warnings
 
 
 class Proxy(dict):
@@ -137,8 +138,8 @@ class MappedClassBase(object):
 
     @classmethod
     def get(cls, **kwargs):
-        return cls._session().query(cls._build_filter(**kwargs)).all()
+        return cls._session().query(cls).filter(cls._build_filter(**kwargs)).all()
 
     @classmethod
     def first(cls, **kwargs):
-        return cls._session().query(cls._build_filter(**kwargs)).first()
+        return cls._session().query(cls).filter(cls._build_filter(**kwargs)).first()
