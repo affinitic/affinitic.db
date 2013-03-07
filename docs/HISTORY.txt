@@ -4,7 +4,9 @@ Changelog
 0.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Define base class for our mappers
+
+- Define utils for deferred reflection - declarative mapper definition
 
 
 0.6 (2012-06-28)
