@@ -145,9 +145,17 @@ class MappedClassBase(object):
         return session.query(sa.exists().where(cls._build_filter(**kwargs))).scalar()
 
     @classmethod
-    def get(cls, **kwargs):
-        return cls._session().query(cls).filter(cls._build_filter(**kwargs)).all()
+    def get(cls, options=[], **kwargs):
+        session = cls._session()
+        query = session.query(cls)
+        query = query.options(options)
+        return query.filter(cls._build_filter(**kwargs)).all()
+
+    sa_get = get
 
     @classmethod
-    def first(cls, **kwargs):
-        return cls._session().query(cls).filter(cls._build_filter(**kwargs)).first()
+    def first(cls, options=[], **kwargs):
+        session = cls._session()
+        query = session.query(cls)
+        query = query.options(options)
+        return query.filter(cls._build_filter(**kwargs)).first()
