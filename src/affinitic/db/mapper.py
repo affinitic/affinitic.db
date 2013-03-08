@@ -36,6 +36,41 @@ class Proxy(dict):
         return super(dict, self).__getattr__(name, default)
 
 
+class Relation(object):
+    """
+    Relation decorator for the declarative mappers
+    The relation method defined with this decorator must return an sqlalchemy
+    relation object and the relation name will be the same as the method name.
+
+    The declaration of the relations are made by the __declare_last__ method of
+    the class MappedClassBase.
+
+    Example
+    -------
+    @Relation
+    def monster(cls):
+        from monster import Monster
+        return sqlalchemy.orm.relation(Monster, lazy=False)
+    """
+
+    def __init__(self, method):
+        self.method = method
+        self.relation_name = method.func_name
+        # Register the decorator
+        self.decorator = self.__class__
+
+    def __call__(self):
+        # Returns a dictionary with the relation and his name
+        print self.cls
+        return {self.relation_name: self.method.__call__(self.cls)}
+
+    def __get__(self, instance, cls):
+        self.cls = cls
+        self.obj = instance
+
+        return self.__call__
+
+
 class MappedClassBase(object):
     """
     Mapper base class
@@ -159,3 +194,52 @@ class MappedClassBase(object):
         query = session.query(cls)
         query = query.options(options)
         return query.filter(cls._build_filter(**kwargs)).first()
+
+    @classmethod
+    def __declare_last__(cls):
+        if hasattr(cls, '_relations_dict') is False:
+            cls._relations_dict = {}
+        if hasattr(cls, '_active_relations') is False:
+            cls._active_relations = []
+        cls._create_relations()
+        # Removes the active relations after the creation to avoid problems
+        # with the redeclaration of the mapper
+        cls._active_relations = []
+
+    @classmethod
+    def declare_relations(cls, relations_list):
+        """
+        Declares a list of relations
+        ex: Mapper.declare_relations(['a', 'b'])
+        """
+        for relation in relations_list:
+            cls.declare_relation(relation)
+
+    @classmethod
+    def declare_relation(cls, relation_name):
+        """ Declares a single relation ex: Mapper.declare_relation('a') """
+        if hasattr(cls, '_active_relations') is False:
+            cls._active_relations = []
+        cls._active_relations.append(relation_name)
+
+    @classmethod
+    def _create_relations(cls):
+        """ Creates the relations on the mapper """
+        # Creates the dict with all the relations
+        for relation in cls._get_relations():
+            cls._relations_dict.update(getattr(cls, relation)())
+        declared_relations = {}
+        for relation in cls._active_relations or cls._relations_dict.keys():
+            declared_relations[relation] = cls._relations_dict.get(relation)
+        cls.__mapper__.add_properties(declared_relations)
+
+    @classmethod
+    def _get_relations(cls):
+        """ Returns the relations defined with the Relation decorator """
+        disable_sa_deprecation_warnings()
+        relations = []
+        for method in cls.__dict__.values():
+            if hasattr(method, 'decorator') and method.decorator == Relation:
+                relations.append(method.relation_name)
+        enable_sa_deprecation_warnings()
+        return relations
