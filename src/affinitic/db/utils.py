@@ -45,7 +45,8 @@ def get_fk_with_schema(table):
     return fk_list
 
 
-def initialize_declarative_mappers(declarativebase, metadata, reflection=True):
+def initialize_declarative_mappers(declarativebase, metadata, reflection=True,
+                                   relation=True):
     # Avoid troubles with sqlite and the schemas
     tables = dict(declarativebase.metadata.tables)
     if isinstance(metadata.bind.dialect, SQLiteDialect):
@@ -58,6 +59,11 @@ def initialize_declarative_mappers(declarativebase, metadata, reflection=True):
         new_tables[table_key] = table
     metadata.tables = immutabledict(new_tables)
     for mapper in declaratives_mappers(metadata):
+        # Avoids the declaration of relations if it's necessary
+        if relation is False and mapper.has_active_relation() is False:
+            mapper._inactive_relations = True
+        else:
+            mapper._inactive_relations = False
         # no reflection on sqlite table
         if reflection and \
            not isinstance(metadata.bind.dialect, SQLiteDialect) and \

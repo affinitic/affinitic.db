@@ -60,8 +60,7 @@ class Relation(object):
         self.decorator = self.__class__
 
     def __call__(self):
-        # Returns a dictionary with the relation and his name
-        print self.cls
+        """ Returns a dictionary with the relation and his name """
         return {self.relation_name: self.method.__call__(self.cls)}
 
     def __get__(self, instance, cls):
@@ -181,10 +180,10 @@ class MappedClassBase(object):
 
     @classmethod
     def __declare_last__(cls):
-        if hasattr(cls, '_relations_dict') is False:
-            cls._relations_dict = {}
-        if hasattr(cls, '_active_relations') is False:
-            cls._active_relations = []
+        if cls._inactive_relations is True:
+            return
+        cls._relations_dict = getattr(cls, '_relations_dict', {})
+        cls._active_relations = getattr(cls, '_active_relations', [])
         cls._create_relations()
         # Removes the active relations after the creation to avoid problems
         # with the redeclaration of the mapper
@@ -202,8 +201,7 @@ class MappedClassBase(object):
     @classmethod
     def declare_relation(cls, relation_name):
         """ Declares a single relation ex: Mapper.declare_relation('a') """
-        if hasattr(cls, '_active_relations') is False:
-            cls._active_relations = []
+        cls._active_relations = getattr(cls, '_active_relations', [])
         cls._active_relations.append(relation_name)
 
     @classmethod
@@ -227,3 +225,8 @@ class MappedClassBase(object):
                 relations.append(method.relation_name)
         enable_sa_deprecation_warnings()
         return relations
+
+    @classmethod
+    def has_active_relation(cls):
+        """ Verifies if there is declared relations """
+        return len(getattr(cls, '_active_relations', [])) > 0
