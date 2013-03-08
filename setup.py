@@ -32,6 +32,7 @@ setup(name='affinitic.db',
           # -*- Extra requirements: -*-
           'pysqlite',
           'zope.sqlalchemy',
+          'dogpile.cache'
       ],
       entry_points={
             'console_scripts': [

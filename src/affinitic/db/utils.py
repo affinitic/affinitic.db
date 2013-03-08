@@ -16,6 +16,14 @@ try:
     from sqlalchemy.databases.sqlite import SQLiteDialect
 except:
     from sqlalchemy.dialects.sqlite.pysqlite import SQLiteDialect_pysqlite as SQLiteDialect
+try:
+    from sqlalchemy.dialects.oracle.cx_oracle import OracleDialect_cx_oracle as OracleDialect
+except:
+    from sqlalchemy.databases.oracle import OracleDialect
+try:
+    from sqlalchemy.dialects.postgresql.psycopg2 import PGDialect_psycopg2 as PgDialect
+except:
+    from sqlalchemy.databases.postgres import PGDialect as PgDialect
 
 try:
     from sqlalchemy.ext.declarative import DeferredReflection
@@ -131,3 +139,14 @@ def disable_sa_deprecation_warnings():
 def enable_sa_deprecation_warnings():
     # turn on all deprecation warnings coming from SA
     warnings.filterwarnings("always", category=SADeprecationWarning)
+
+
+def engine_type(engine):
+    if isinstance(engine.dialect, OracleDialect):
+        return 'oracle'
+    elif isinstance(engine.dialect, PgDialect):
+        return 'pg'
+    elif isinstance(engine.dialect, SQLiteDialect):
+        return 'sqlite'
+    else:
+        raise ValueError('Unknown dialect')
