@@ -2,7 +2,7 @@
 import sqlalchemy as sa
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
-from affinitic.db.utils import disable_sa_deprecation_warnings, enable_sa_deprecation_warnings
+from affinitic.db.utils import disable_sa_deprecation_warnings, enable_sa_deprecation_warnings, engine_type
 
 
 class Proxy(dict):
@@ -125,6 +125,10 @@ class MappedClassBase(object):
     add = insert
 
     @classmethod
+    def _engine_type(cls):
+        return engine_type(cls._session().bind)
+
+    @classmethod
     def _build_filter(cls, operator=sa.and_, **kwargs):
         filters = []
         for key, value in kwargs.items():
@@ -134,7 +138,11 @@ class MappedClassBase(object):
 
     @classmethod
     def exists(cls, **kwargs):
-        return cls._session().query(sa.exists().where(cls._build_filter(**kwargs))).scalar()
+        session = cls._session()
+        if cls._engine_type() == 'oracle':
+            # oracle doesn't handle 'select from ...' queries
+            return session.query(cls).filter('rownum = 1').filter(cls._build_filter(**kwargs)).count() == 1
+        return session.query(sa.exists().where(cls._build_filter(**kwargs))).scalar()
 
     @classmethod
     def get(cls, **kwargs):
