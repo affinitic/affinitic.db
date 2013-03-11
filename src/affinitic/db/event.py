@@ -8,7 +8,11 @@ Copyright by Affinitic sprl
 $Id$
 """
 import time
-from sqlalchemy import event
+try:
+    from sqlalchemy import event
+except ImportError:
+    # the event module is implemented since sqlalchemy 0.7
+    event = None
 from sqlalchemy.engine import Engine
 from zope.interface import implements
 from affinitic.db.log import log_long_query
@@ -38,6 +42,10 @@ class MSSqlDBInitialized(object):
 
 
 def register_logging():
+    if event is None:
+        raise ImportError(u'The event module is implemented on SQLAlchemy '
+            u'0.7 and higher')
+
     @event.listens_for(Engine, "before_cursor_execute")
     def before_cursor_execute(conn, cursor, statement, parameters, context,
                               executemany):
