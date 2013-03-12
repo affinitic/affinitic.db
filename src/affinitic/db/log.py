@@ -12,7 +12,8 @@ def need_to_log(total_time):
 
 
 def get_arsia_frame():
-    ignored_packages = ['SQLAlchemy', 'affinitic.db', 'dogpile.cache']
+    ignored_packages = ['SQLAlchemy', 'affinitic.db', 'dogpile.cache',
+                        'dogpile.core']
     for frame, file_path, linenumber, fname, line, i in inspect.stack()[1:]:
         if [ignored for ignored in ignored_packages if ignored in file_path]:
                 continue
