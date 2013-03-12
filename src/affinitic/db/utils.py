@@ -67,7 +67,7 @@ def initialize_declarative_mappers(declarativebase, metadata, reflection=True,
         new_tables[table_key] = table
     metadata.tables = immutabledict(new_tables)
     for mapper in declaratives_mappers(metadata):
-        # Avoids the declaration of relations if it's necessary
+        # Avoids the declaration of relations if it's not necessary
         if relation is False and mapper.has_active_relation() is False:
             mapper._inactive_relations = True
         else:
@@ -112,9 +112,10 @@ def declaratives_mappers(metadata):
 
 
 def initialize_defered_mappers(metadata):
-    # Initialize the relations with old style tables and redefines the mappers
-    # if the clear_mappers() function was called
+    # Execute __declare__last__ for sqlalchemy 0.4
     for mapper in declaratives_mappers(metadata):
+        if hasattr(mapper, 'init_relations'):
+            mapper.init_relations()
         # http://docs.sqlalchemy.org/en/rel_0_7/orm/extensions/declarative.html#declare-last
         if sa_version.startswith('0.4') and hasattr(mapper, '__declare_last__') is True:
             mapper.__declare_last__()

@@ -195,7 +195,8 @@ class MappedClassBase(object):
         return query.filter(cls._build_filter(**kwargs)).first()
 
     @classmethod
-    def __declare_last__(cls):
+    def init_relations(cls):
+        """ Initialize the relations if that's necessary """
         if cls._inactive_relations is True:
             return
         cls._relations_dict = getattr(cls, '_relations_dict', {})
