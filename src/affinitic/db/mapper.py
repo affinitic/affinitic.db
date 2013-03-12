@@ -179,10 +179,12 @@ class MappedClassBase(object):
         return session.query(sa.exists().where(cls._build_filter(**kwargs))).scalar()
 
     @classmethod
-    def get(cls, options=[], **kwargs):
+    def get(cls, options=[], order_by=[], **kwargs):
         session = cls._session()
         query = session.query(cls)
         query = query.options(options)
+        if order_by:
+            query = query.order_by(order_by)
         return query.filter(cls._build_filter(**kwargs)).all()
 
     sa_get = get
