@@ -7,12 +7,12 @@ setup(name='affinitic.db',
       version=version,
       description="db initialization generic code",
       long_description=open("README.txt").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+      open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
-        "Programming Language :: Python",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-        ],
+          "Programming Language :: Python",
+          "Topic :: Software Development :: Libraries :: Python Modules",
+      ],
       keywords='',
       author='Jean-Francois Roche',
       author_email='jfroche@affinitic.be',
@@ -33,9 +33,8 @@ setup(name='affinitic.db',
           'pysqlite',
           'zope.sqlalchemy',
       ],
-      extras_requires=dict(
+      extra_requires=dict(
           caching=['dogpile.cache'],
       ),
       entry_points={
-            'console_scripts': [
-                'test = affinitic.db.tests.runalltests:main']})
+          'console_scripts': ['test = affinitic.db.tests.runalltests:main']})
