@@ -32,8 +32,10 @@ setup(name='affinitic.db',
           # -*- Extra requirements: -*-
           'pysqlite',
           'zope.sqlalchemy',
-          'dogpile.cache'
       ],
+      extras_requires=dict(
+          caching=['dogpile.cache'],
+      ),
       entry_points={
             'console_scripts': [
                 'test = affinitic.db.tests.runalltests:main']})
