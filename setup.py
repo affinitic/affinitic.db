@@ -29,11 +29,10 @@ setup(name='affinitic.db',
           'grokcore.component',
           'zope.testing',
           'zope.security',
-          # -*- Extra requirements: -*-
           'pysqlite',
           'zope.sqlalchemy',
       ],
-      extra_requires=dict(
+      extras_require=dict(
           caching=['dogpile.cache'],
       ),
       entry_points={
