@@ -187,6 +187,13 @@ class MappedClassBase(object):
             query = query.order_by(order_by)
         return query.filter(cls._build_filter(**kwargs)).all()
 
+    @classmethod
+    def count(cls, options=[], **kwargs):
+        session = cls._session()
+        query = session.query(cls)
+        query = query.options(options)
+        return query.filter(cls._build_filter(**kwargs)).count()
+
     sa_get = get
 
     @classmethod
