@@ -145,6 +145,15 @@ class MappedClassBase(object):
         if commit is True:
             sess.commit()
 
+    def delete(self, flush=True, commit=False):
+        """ Delete the current instance into the session """
+        sess = self.session
+        sess.delete(self)
+        if flush is True:
+            sess.flush()
+        if commit is True:
+            sess.commit()
+
     def save_or_update(self, flush=True, commit=False):
         """ Save or update the current instance into the session """
         sess = self.session
