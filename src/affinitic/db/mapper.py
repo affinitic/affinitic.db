@@ -249,3 +249,13 @@ class MappedClassBase(object):
     def has_active_relation(cls):
         """ Verifies if there is declared relations """
         return len(getattr(cls, '_active_relations', [])) > 0
+
+    @classmethod
+    def truncate(cls):
+        """ Delete all from table """
+        if cls._engine_type() == 'pg':
+            sess = cls._session()
+            sess.execute("truncate table %s;" % cls.__tablename__)
+            sess.commit()
+        else:
+            raise NotImplementedError("Truncate not supported yet with this database type")
