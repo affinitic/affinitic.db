@@ -128,7 +128,7 @@ class MappedClassBase(object):
     def update(self, flush=True, commit=False):
         """ Update the current instance into the session """
         sess = self.session
-        sess.update(self)
+        sess.add(self)
         if flush is True:
             sess.flush()
         if commit is True:
