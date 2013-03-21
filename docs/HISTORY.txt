@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.8.1 (unreleased)
+------------------
+
+- Add truncate method in mappedclass
+
+
 0.8 (2013-03-15)
 ----------------
 
