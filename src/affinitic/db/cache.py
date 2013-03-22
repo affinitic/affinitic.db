@@ -150,7 +150,10 @@ def _key_from_query(query, qualifier=None):
             value = bind.value
 
         v.append(unicode(value))
-
+    if query._offset:
+        v.append(str(query._offset))
+    if query._limit:
+        v.append(str(query._limit))
     stmt = query.statement
     visitors.traverse(stmt, {}, {'bindparam': visit_bindparam})
 
