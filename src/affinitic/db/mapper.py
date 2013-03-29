@@ -267,11 +267,22 @@ class MappedClassBase(object):
         return len(getattr(cls, '_active_relations', [])) > 0
 
     @classmethod
-    def truncate(cls):
+    def truncate(cls, restart=False):
         """ Delete all from table """
         if cls._engine_type() == 'pg':
             sess = cls._session()
-            sess.execute("truncate table %s;" % cls.__tablename__)
+            tablename = cls.__tablename__
+            if cls.__table__.schema is not None:
+                tablename = '%s.%s' % (cls.__table__.schema, tablename)
+            options = list()
+            if restart is True:
+                options.append('RESTART IDENTITY')
+
+            query = "TRUNCATE table %(table)s %(options)s;" % {
+                'table': tablename,
+                'options': ' '.join(options)}
+            print query
+            sess.execute(query)
             sess.commit()
         else:
             raise NotImplementedError("Truncate not supported yet with this database type")
