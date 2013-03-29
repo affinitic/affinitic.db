@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.8.1 (unreleased)
+0.8.1 (2013-03-29)
 ------------------
 
 - Adds the truncate, delete and count helper methods
