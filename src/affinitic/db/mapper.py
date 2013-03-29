@@ -281,7 +281,6 @@ class MappedClassBase(object):
             query = "TRUNCATE table %(table)s %(options)s;" % {
                 'table': tablename,
                 'options': ' '.join(options)}
-            print query
             sess.execute(query)
             sess.commit()
         else:
