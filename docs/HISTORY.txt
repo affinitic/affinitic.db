@@ -4,7 +4,9 @@ Changelog
 0.8.1 (unreleased)
 ------------------
 
-- Add truncate method in mappedclass
+- Adds the truncate, delete and count helper methods
+
+- Take offset & limit into account when caching queries (cache key)
 
 
 0.8 (2013-03-15)
