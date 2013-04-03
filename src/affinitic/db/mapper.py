@@ -247,6 +247,9 @@ class MappedClassBase(object):
             cls._relations_dict.update(getattr(cls, relation)())
         declared_relations = {}
         for relation in cls._active_relations or cls._relations_dict.keys():
+            if relation not in cls._relations_dict:
+                raise ValueError('Unknown relation "%s" for the table "%s"' % (
+                    relation, cls.__tablename__))
             declared_relations[relation] = cls._relations_dict.get(relation)
         cls.__mapper__.add_properties(declared_relations)
 
