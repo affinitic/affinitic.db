@@ -217,6 +217,7 @@ class MappedClassBase(object):
         """ Initialize the relations if that's necessary """
         if cls._inactive_relations is True:
             return
+        cls._relations_keys = getattr(cls, '_relations_keys', [])
         cls._relations_dict = getattr(cls, '_relations_dict', {})
         cls._active_relations = getattr(cls, '_active_relations', [])
         cls._create_relations()
@@ -242,15 +243,17 @@ class MappedClassBase(object):
     @classmethod
     def _create_relations(cls):
         """ Creates the relations on the mapper """
-        # Creates the dict with all the relations
+        # Stores the list of the relations
         for relation in cls._get_relations():
-            cls._relations_dict.update(getattr(cls, relation)())
+            cls._relations_keys.append(relation)
         declared_relations = {}
-        for relation in cls._active_relations or cls._relations_dict.keys():
-            if relation not in cls._relations_dict:
+        for relation in cls._active_relations or cls._relations_keys:
+            if relation not in cls._relations_keys:
                 raise ValueError('Unknown relation "%s" for the table "%s"' % (
                     relation, cls.__tablename__))
-            declared_relations[relation] = cls._relations_dict.get(relation)
+            relation_definition = cls._get_relation(relation)
+            declared_relations.update(relation_definition)
+            cls._relations_dict.update(relation_definition)
         cls.__mapper__.add_properties(declared_relations)
 
     @classmethod
@@ -263,6 +266,12 @@ class MappedClassBase(object):
                 relations.append(method.relation_name)
         enable_sa_deprecation_warnings()
         return relations
+
+    @classmethod
+    def _get_relation(cls, relation_name):
+        """ Returns a relation """
+        return cls._relations_dict.get(relation_name,
+                                       getattr(cls, relation_name)())
 
     @classmethod
     def has_active_relation(cls):

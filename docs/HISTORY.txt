@@ -4,7 +4,7 @@ Changelog
 0.8.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixes an issue during tests with multiple layers and the relation decorator.
 
 
 0.8.1 (2013-03-29)
