@@ -3,6 +3,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
 from affinitic.db.utils import disable_sa_deprecation_warnings, enable_sa_deprecation_warnings, engine_type
+import collections
 
 
 class Proxy(dict):
@@ -193,7 +194,10 @@ class MappedClassBase(object):
         query = session.query(cls)
         query = query.options(options)
         if order_by:
-            query = query.order_by(order_by)
+            if isinstance(order_by, list):
+                query = query.order_by(*order_by)
+            else:
+                query = query.order_by(order_by)
         return query.filter(cls._build_filter(**kwargs)).all()
 
     @classmethod
