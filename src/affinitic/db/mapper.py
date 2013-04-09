@@ -3,7 +3,6 @@ import sqlalchemy as sa
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
 from affinitic.db.utils import disable_sa_deprecation_warnings, enable_sa_deprecation_warnings, engine_type
-import collections
 
 
 class Proxy(dict):
