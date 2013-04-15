@@ -270,8 +270,9 @@ class MappedClassBase(object):
     @classmethod
     def _get_relation(cls, relation_name):
         """ Returns a relation """
-        return cls._relations_dict.get(relation_name,
-                                       getattr(cls, relation_name)())
+        if relation_name in cls._relations_dict:
+            return {relation_name: cls._relations_dict.get(relation_name)}
+        return getattr(cls, relation_name)()
 
     @classmethod
     def has_active_relation(cls):
