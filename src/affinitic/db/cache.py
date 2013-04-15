@@ -149,7 +149,10 @@ def _key_from_query(query, qualifier=None):
         else:
             value = bind.value
 
-        v.append(unicode(value))
+        try:
+            v.append(unicode(value))
+        except UnicodeDecodeError:
+            v.append(unicode(value, 'utf-8'))
     if query._offset:
         v.append(str(query._offset))
     if query._limit:

@@ -193,7 +193,10 @@ class MappedClassBase(object):
         query = session.query(cls)
         query = query.options(options)
         if order_by:
-            query = query.order_by(order_by)
+            if isinstance(order_by, list):
+                query = query.order_by(*order_by)
+            else:
+                query = query.order_by(order_by)
         return query.filter(cls._build_filter(**kwargs)).all()
 
     @classmethod
