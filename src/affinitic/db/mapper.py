@@ -218,15 +218,31 @@ class MappedClassBase(object):
     @classmethod
     def init_relations(cls):
         """ Initialize the relations if that's necessary """
-        if cls._inactive_relations is True:
+        if cls._relations_state in ('INACTIVE', 'INITIALIZED'):
             return
         cls._relations_keys = getattr(cls, '_relations_keys', [])
         cls._relations_dict = getattr(cls, '_relations_dict', {})
         cls._active_relations = getattr(cls, '_active_relations', [])
-        cls._create_relations()
-        # Removes the active relations after the creation to avoid problems
-        # with the redeclaration of the mapper
-        cls._active_relations = []
+
+        # Stores the list of the relations
+        for relation in cls._get_relations():
+            cls._relations_keys.append(relation)
+        for relation in cls._active_relations or cls._relations_keys:
+            if relation not in cls._relations_keys:
+                raise ValueError('Unknown relation "%s" for the table "%s"' % (
+                    relation, cls.__tablename__))
+            cls._relations_dict.update(cls._get_relation(relation))
+        cls._relations_state = 'INITIALIZED'
+
+    @apply
+    def _relations_state():
+        def fget(cls):
+            return getattr(cls, '_relations_state_value', 'UNKNOWN')
+
+        def fset(cls, value):
+            cls._relations_state_value = value
+
+        return property(fget, fset)
 
     @classmethod
     def declare_relations(cls, relations_list):
@@ -245,19 +261,17 @@ class MappedClassBase(object):
 
     @classmethod
     def _create_relations(cls):
-        """ Creates the relations on the mapper """
-        # Stores the list of the relations
-        for relation in cls._get_relations():
-            cls._relations_keys.append(relation)
+        """ Creates the relations on the mapper if that's necessary """
+        if cls._relations_state != 'INITIALIZED':
+            return
         declared_relations = {}
         for relation in cls._active_relations or cls._relations_keys:
-            if relation not in cls._relations_keys:
-                raise ValueError('Unknown relation "%s" for the table "%s"' % (
-                    relation, cls.__tablename__))
-            relation_definition = cls._get_relation(relation)
-            declared_relations.update(relation_definition)
-            cls._relations_dict.update(relation_definition)
+            declared_relations.update(cls._get_relation(relation))
         cls.__mapper__.add_properties(declared_relations)
+        # Removes the active relations after the creation to avoid problems
+        # with the redeclaration of the mapper
+        cls._active_relations = []
+        cls._relations_state = 'CREATED'
 
     @classmethod
     def _get_relations(cls):

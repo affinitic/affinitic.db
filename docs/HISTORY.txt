@@ -6,6 +6,8 @@ Changelog
 
 - Fixes an issue during tests with multiple layers and the relation decorator.
 
+- Loops on the relations before the creation of the mappers for following the relations imports.
+
 
 0.8.1 (2013-03-29)
 ------------------

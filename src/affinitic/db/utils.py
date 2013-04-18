@@ -55,6 +55,18 @@ def get_fk_with_schema(table):
 
 def initialize_declarative_mappers(declarativebase, metadata, reflection=True,
                                    relation=True):
+    # Loops on the mapper for the relations
+    while True:
+        before_length = len(declarativebase.metadata.tables)
+        for mapper in declaratives_mappers(declarativebase.metadata):
+            if relation is False and mapper.has_active_relation() is False:
+                mapper._relations_state = 'INACTIVE'
+            else:
+                mapper._relations_state = None
+            mapper.init_relations()
+        if before_length == len(declarativebase.metadata.tables):
+            break
+
     # Avoid troubles with sqlite and the schemas
     tables = dict(declarativebase.metadata.tables)
     if isinstance(metadata.bind.dialect, SQLiteDialect):
@@ -67,11 +79,6 @@ def initialize_declarative_mappers(declarativebase, metadata, reflection=True,
         new_tables[table_key] = table
     metadata.tables = immutabledict(new_tables)
     for mapper in declaratives_mappers(metadata):
-        # Avoids the declaration of relations if it's not necessary
-        if relation is False and mapper.has_active_relation() is False:
-            mapper._inactive_relations = True
-        else:
-            mapper._inactive_relations = False
         # no reflection on sqlite table
         if reflection and \
            not isinstance(metadata.bind.dialect, SQLiteDialect) and \
@@ -114,8 +121,8 @@ def declaratives_mappers(metadata):
 def initialize_defered_mappers(metadata):
     # Execute __declare__last__ for sqlalchemy 0.4
     for mapper in declaratives_mappers(metadata):
-        if hasattr(mapper, 'init_relations'):
-            mapper.init_relations()
+        if hasattr(mapper, '_create_relations'):
+            mapper._create_relations()
         # http://docs.sqlalchemy.org/en/rel_0_7/orm/extensions/declarative.html#declare-last
         if sa_version.startswith('0.4') and hasattr(mapper, '__declare_last__') is True:
             mapper.__declare_last__()
