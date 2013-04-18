@@ -2,31 +2,40 @@
 import warnings
 import sqlalchemy
 import zope.deprecation
-from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy import __version__ as sa_version
 try:
     from sqlalchemy.exceptions import SADeprecationWarning
+    SADeprecationWarning  # Pyflakes fix
 except ImportError:
     from sqlalchemy.exc import SADeprecationWarning
+
 try:
     from sqlalchemy.util._collections import immutabledict
+    immutabledict  # Pyflakes fix
 except ImportError:
     immutabledict = dict
+
 try:
     from sqlalchemy.databases.sqlite import SQLiteDialect
+    SQLiteDialect  # Pyflakes fix
 except:
     from sqlalchemy.dialects.sqlite.pysqlite import SQLiteDialect_pysqlite as SQLiteDialect
+
 try:
     from sqlalchemy.dialects.oracle.cx_oracle import OracleDialect_cx_oracle as OracleDialect
+    OracleDialect  # Pyflakes fix
 except:
     from sqlalchemy.databases.oracle import OracleDialect
+
 try:
     from sqlalchemy.dialects.postgresql.psycopg2 import PGDialect_psycopg2 as PgDialect
+    PgDialect  # Pyflakes fix
 except:
     from sqlalchemy.databases.postgres import PGDialect as PgDialect
 
 try:
     from sqlalchemy.ext.declarative import DeferredReflection
+    DeferredReflection  # Pyflakes fix
 except ImportError:
     from affinitic.db.declarative import DeferredReflection
 
