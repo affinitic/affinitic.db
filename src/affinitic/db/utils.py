@@ -70,7 +70,7 @@ def initialize_declarative_mappers(declarativebase, metadata, reflection=True,
         for mapper in declaratives_mappers(declarativebase.metadata):
             if relation is False and mapper.has_active_relation() is False:
                 mapper._relations_state = 'INACTIVE'
-            else:
+            elif mapper._relations_state == 'INACTIVE':
                 mapper._relations_state = None
             mapper.init_relations()
         if before_length == len(declarativebase.metadata.tables):

@@ -42,26 +42,40 @@ class Relation(object):
     The relation method defined with this decorator must return an sqlalchemy
     relation object and the relation name will be the same as the method name.
 
-    The declaration of the relations are made by the __declare_last__ method of
-    the class MappedClassBase.
+    The declaration of the relations are made during the call of the
+    initialize_defered_mappers function.
 
     Example
     -------
     @Relation
     def monster(cls):
-        from monster import Monster
         return sqlalchemy.orm.relation(Monster, lazy=False)
     """
 
     def __init__(self, method):
         self.method = method
         self.relation_name = method.func_name
+        self.imports = None
+        self.mappers = None
         # Register the decorator
         self.decorator = self.__class__
 
     def __call__(self):
         """ Returns a dictionary with the relation and his name """
+        if self.mappers:
+            return {self.relation_name: self.method.__call__(self.cls,
+                                                             *self.mappers)}
         return {self.relation_name: self.method.__call__(self.cls)}
+
+    def deferred_import(self):
+        if self.imports is None:
+            return
+
+        self.mappers = []
+        for path in self.imports:
+            module_path, name = path.split(':')
+            module = __import__(module_path, {}, {}, ['*'])
+            self.mappers.append(getattr(module, name))
 
     def __get__(self, instance, cls):
         self.cls = cls
@@ -70,11 +84,38 @@ class Relation(object):
         return self.__call__
 
 
+class RelationImport(object):
+    """
+    Decorator for deferring the importation of the mappers needed by the relation
+    from the creation of the relation herself.
+
+    This decorator must be combined with the Relation decorator.
+
+    Example
+    -------
+    @RelationImport('my.monster:Vampire',
+                    'my.place:Transylvania')
+    @Relation
+    def transylvania_vampires(cls, mappers):
+        Vampire, Transylvania = mappers
+        return sqlalchemy.orm.relation(Transylvania,
+            ...
+    """
+
+    def __init__(self, *imports):
+        self.imports = imports
+
+    def __call__(self, relation_decorator):
+        relation_decorator.imports = self.imports
+        return relation_decorator
+
+
 class MappedClassBase(object):
     """
     Mapper base class
     """
     __allow_access_to_unprotected_subobjects__ = 1
+    _relations_state = 'UNKNOWN'
 
     def __init__(self, **kw):
         """ accepts keywords arguments used for initialization of
@@ -227,22 +268,7 @@ class MappedClassBase(object):
         # Stores the list of the relations
         for relation in cls._get_relations():
             cls._relations_keys.append(relation)
-        for relation in cls._active_relations or cls._relations_keys:
-            if relation not in cls._relations_keys:
-                raise ValueError('Unknown relation "%s" for the table "%s"' % (
-                    relation, cls.__tablename__))
-            cls._relations_dict.update(cls._get_relation(relation))
         cls._relations_state = 'INITIALIZED'
-
-    @apply
-    def _relations_state():
-        def fget(cls):
-            return getattr(cls, '_relations_state_value', 'UNKNOWN')
-
-        def fset(cls, value):
-            cls._relations_state_value = value
-
-        return property(fget, fset)
 
     @classmethod
     def declare_relations(cls, relations_list):
@@ -266,7 +292,12 @@ class MappedClassBase(object):
             return
         declared_relations = {}
         for relation in cls._active_relations or cls._relations_keys:
-            declared_relations.update(cls._get_relation(relation))
+            if relation not in cls._relations_keys:
+                raise ValueError('Unknown relation "%s" for the table "%s"' % (
+                    relation, cls.__tablename__))
+            relation_definition = cls._get_relation(relation)
+            cls._relations_dict.update(relation_definition)
+            declared_relations.update(relation_definition)
         cls.__mapper__.add_properties(declared_relations)
         # Removes the active relations after the creation to avoid problems
         # with the redeclaration of the mapper
@@ -281,6 +312,7 @@ class MappedClassBase(object):
         for method in cls.__dict__.values():
             if hasattr(method, 'decorator') and method.decorator == Relation:
                 relations.append(method.relation_name)
+                method.deferred_import()
         enable_sa_deprecation_warnings()
         return relations
 
