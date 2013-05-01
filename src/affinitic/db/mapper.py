@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 import sqlalchemy as sa
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
@@ -267,7 +268,8 @@ class MappedClassBase(object):
 
         # Stores the list of the relations
         for relation in cls._get_relations():
-            cls._relations_keys.append(relation)
+            if relation not in cls._relations_keys:
+                cls._relations_keys.append(relation)
         cls._relations_state = 'INITIALIZED'
 
     @classmethod
@@ -287,18 +289,23 @@ class MappedClassBase(object):
 
     @classmethod
     def _create_relations(cls):
-        """ Creates the relations on the mapper if that's necessary """
+        """
+        Creates the relations on the mapper if that's necessary
+
+        Important : For avoiding problems after cleaning the mappers, we need
+            to set a copy of the relation on the mapper class, not the relation
+            itself. This is needed because during the compilation of
+            the relation an instance of the mapper is stored on it.
+        """
         if cls._relations_state != 'INITIALIZED':
             return
-        declared_relations = {}
         for relation in cls._active_relations or cls._relations_keys:
             if relation not in cls._relations_keys:
                 raise ValueError('Unknown relation "%s" for the table "%s"' % (
                     relation, cls.__tablename__))
             relation_definition = cls._get_relation(relation)
             cls._relations_dict.update(relation_definition)
-            declared_relations.update(relation_definition)
-        cls.__mapper__.add_properties(declared_relations)
+            setattr(cls, relation, copy.copy(relation_definition[relation]))
         # Removes the active relations after the creation to avoid problems
         # with the redeclaration of the mapper
         cls._active_relations = []
