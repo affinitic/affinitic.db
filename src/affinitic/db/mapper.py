@@ -227,6 +227,9 @@ class MappedClassBase(object):
         if cls._engine_type() == 'oracle':
             # oracle doesn't handle 'select from ...' queries
             return session.query(cls).filter('rownum = 1').filter(cls._build_filter(**kwargs)).count() == 1
+        if cls._engine_type() == 'sqlite':
+            # SQLite doesn't handle the scalar method
+            return session.query(cls).filter(cls._build_filter(**kwargs)).limit(1).count() == 1
         return session.query(sa.exists().where(cls._build_filter(**kwargs))).scalar()
 
     @classmethod

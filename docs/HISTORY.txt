@@ -10,6 +10,8 @@ Changelog
 
 - Adds the RelationImport decorator.
 
+- Fixes the exists method for SQLite.
+
 
 0.8.1 (2013-03-29)
 ------------------
