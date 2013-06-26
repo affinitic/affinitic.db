@@ -138,31 +138,15 @@ def _key_from_query(query, qualifier=None):
     then combining that with the bound parameter values.
 
     """
-
-    v = []
-    def visit_bindparam(bind):
-
-        if bind.key in query._params:
-            value = query._params[bind.key]
-        elif bind.callable:
-            value = bind.callable()
-        else:
-            value = bind.value
-
-        try:
-            v.append(unicode(value))
-        except UnicodeDecodeError:
-            v.append(unicode(value, 'utf-8'))
-    if query._offset:
-        v.append(str(query._offset))
-    if query._limit:
-        v.append(str(query._limit))
-    stmt = query.statement
-    visitors.traverse(stmt, {}, {'bindparam': visit_bindparam})
+    stmt = query.with_labels().statement
+    compiled = stmt.compile()
+    params = compiled.params
 
     # here we return the key as a long string.  our "key mangler"
     # set up with the region will boil it down to an md5.
-    return " ".join([unicode(stmt)] + v)
+    return " ".join(
+                    [unicode(compiled)] +
+                    [unicode(params[k]) for k in sorted(params)])
 
 class FromCache(MapperOption):
     """Specifies that a Query should load results from a cache."""
@@ -189,24 +173,6 @@ class FromCache(MapperOption):
     def process_query(self, query):
         """Process a Query during normal loading operation."""
         query._cache_region = self
-
-class RelationshipCache(MapperOption):
-    """Specifies that a Query as called within a "lazy load"
-       should load results from a cache."""
-
-    propagate_to_loaders = True
-
-    def __init__(self, attribute, region="default"):
-        self.region = region
-        self.cls_ = attribute.property.parent.class_
-        self.key = attribute.property.key
-
-    def process_query_conditionally(self, query):
-        if query._current_path:
-            mapper, key = query._current_path[-2:]
-            if issubclass(mapper.class_, self.cls_) and \
-                key == self.key:
-                query._cache_region = self
 
 class RelationshipCache(MapperOption):
     """Specifies that a Query as called within a "lazy load"
