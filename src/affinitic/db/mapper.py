@@ -254,10 +254,15 @@ class MappedClassBase(object):
     sa_get = get
 
     @classmethod
-    def first(cls, options=[], **kwargs):
+    def first(cls, options=[], order_by=[], **kwargs):
         session = cls._session()
         query = session.query(cls)
         query = query.options(options)
+        if order_by:
+            if isinstance(order_by, list):
+                query = query.order_by(*order_by)
+            else:
+                query = query.order_by(order_by)
         return query.filter(cls._build_filter(**kwargs)).first()
 
     @classmethod
