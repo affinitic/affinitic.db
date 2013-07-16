@@ -12,6 +12,8 @@ Changelog
 
 - Fixes the exists method for SQLite.
 
+- Adds the order_by parameter to the first method.
+
 
 0.8.1 (2013-03-29)
 ------------------
