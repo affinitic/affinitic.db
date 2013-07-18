@@ -123,18 +123,19 @@ def declaratives_mappers(metadata):
             results.append(obj[0])
     for klass in results:
         if hasattr(klass, '__table__') and \
-           klass.__table__ in metadata.tables.values():
+           klass.__table__.key in [metadata.tables[k].key for k in \
+                                   metadata.tables.keys()]:
             yield klass
 
 
 def initialize_defered_mappers(metadata):
     # Execute __declare__last__ for sqlalchemy 0.4
     for mapper in declaratives_mappers(metadata):
-        if hasattr(mapper, '_create_relations'):
-            mapper._create_relations()
         # http://docs.sqlalchemy.org/en/rel_0_7/orm/extensions/declarative.html#declare-last
         if sa_version.startswith('0.4') and hasattr(mapper, '__declare_last__') is True:
             mapper.__declare_last__()
+        if hasattr(mapper, '_create_relations'):
+            mapper._create_relations()
 
 
 def deprecated_table_definition(replacement):
