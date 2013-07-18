@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import copy
 import sqlalchemy as sa
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
-from affinitic.db.utils import disable_sa_deprecation_warnings, enable_sa_deprecation_warnings, engine_type
+from affinitic.db.utils import (disable_sa_deprecation_warnings,
+                                enable_sa_deprecation_warnings,
+                                engine_type)
 
 
 class Proxy(dict):
@@ -266,7 +267,6 @@ class MappedClassBase(object):
         if cls._relations_state in ('INACTIVE', 'INITIALIZED'):
             return
         cls._relations_keys = getattr(cls, '_relations_keys', [])
-        cls._relations_dict = getattr(cls, '_relations_dict', {})
         cls._active_relations = getattr(cls, '_active_relations', [])
 
         # Stores the list of the relations
@@ -307,8 +307,7 @@ class MappedClassBase(object):
                 raise ValueError('Unknown relation "%s" for the table "%s"' % (
                     relation, cls.__tablename__))
             relation_definition = cls._get_relation(relation)
-            cls._relations_dict.update(relation_definition)
-            setattr(cls, relation, copy.copy(relation_definition[relation]))
+            setattr(cls, relation, relation_definition[relation])
         # Removes the active relations after the creation to avoid problems
         # with the redeclaration of the mapper
         cls._active_relations = []
@@ -329,9 +328,10 @@ class MappedClassBase(object):
     @classmethod
     def _get_relation(cls, relation_name):
         """ Returns a relation """
-        if relation_name in cls._relations_dict:
-            return {relation_name: cls._relations_dict.get(relation_name)}
-        return getattr(cls, relation_name)()
+        if hasattr(cls, '__relation_%s' % relation_name) is False:
+            setattr(cls, '__relation_%s' % relation_name,
+                    getattr(cls, relation_name))
+        return getattr(cls, '__relation_%s' % relation_name)()
 
     @classmethod
     def has_active_relation(cls):
