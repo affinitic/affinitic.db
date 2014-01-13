@@ -130,12 +130,19 @@ def declaratives_mappers(metadata):
 
 def initialize_defered_mappers(metadata):
     # Execute __declare__last__ for sqlalchemy 0.4
+    ignored_tables = []
     for mapper in declaratives_mappers(metadata):
         # http://docs.sqlalchemy.org/en/rel_0_7/orm/extensions/declarative.html#declare-last
+        if mapper._create_table is False:
+            tname = '.'.join([e for e in [mapper.__table__.schema,
+                                          mapper.__table__.name] if e])
+            ignored_tables.append(tname)
         if sa_version.startswith('0.4') and hasattr(mapper, '__declare_last__') is True:
             mapper.__declare_last__()
         if hasattr(mapper, '_create_relations'):
             mapper._create_relations()
+    for tname in ignored_tables:
+        del metadata.tables[tname]
 
 
 def deprecated_table_definition(replacement):
