@@ -16,8 +16,10 @@ except ImportError:
 from sqlalchemy.engine import Engine
 from zope.interface import implements
 from affinitic.db.log import log_long_query
-from affinitic.db.interfaces import (IPGDBInitialized, IOracleDBInitialized,
-                                     IMSSqlDBInitialized)
+from affinitic.db.interfaces import IMSSqlDBInitialized
+from affinitic.db.interfaces import IMySQLDBInitialized
+from affinitic.db.interfaces import IOracleDBInitialized
+from affinitic.db.interfaces import IPGDBInitialized
 
 
 class PGDBInitialized(object):
@@ -39,6 +41,13 @@ class MSSqlDBInitialized(object):
 
     def __init__(self, objectToAdapt):
         self.object = objectToAdapt
+
+
+class MySQLDBInitialized(object):
+    implements(IMySQLDBInitialized)
+
+    def __init__(self, object_to_adapt):
+        self.object = object_to_adapt
 
 
 def register_logging():

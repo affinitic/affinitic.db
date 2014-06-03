@@ -23,6 +23,10 @@ class IMSSqlDBInitialized(IObjectEvent):
     """DBInitialized event"""
 
 
+class IMySQLDBInitialized(IObjectEvent):
+    """DBInitialized event"""
+
+
 class IMetadata(Interface):
     """
     """
