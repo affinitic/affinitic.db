@@ -53,7 +53,7 @@ class MySQLDBInitialized(object):
 def register_logging():
     if event is None:
         raise ImportError(u'The event module is implemented on SQLAlchemy '
-            u'0.7 and higher')
+                          u'0.7 and higher')
 
     @event.listens_for(Engine, "before_cursor_execute")
     def before_cursor_execute(conn, cursor, statement, parameters, context,
