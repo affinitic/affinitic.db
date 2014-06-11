@@ -117,13 +117,13 @@ def declaratives_mappers(metadata):
     for obj in all_refs:
         # __mro__ attributes are tuples
         # and if a tuple is found here, the given class is one of its members
-        if (isinstance(obj, tuple) and
+        if isinstance(obj, tuple) \
+           and getattr(obj[0], "__mro__", None) is obj:
             # check if the found tuple is the __mro__ attribute of a class
-            getattr(obj[0], "__mro__", None) is obj):
             results.append(obj[0])
     for klass in results:
         if hasattr(klass, '__table__') and \
-           klass.__table__.key in [metadata.tables[k].key for k in \
+           klass.__table__.key in [metadata.tables[k].key for k in
                                    metadata.tables.keys()]:
             yield klass
 

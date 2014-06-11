@@ -24,7 +24,7 @@ class Proxy(dict):
         if hasattr(self, '_state'):
             del self['_state']
         # old:
-        #del self['_sa_instance_state']
+        # del self['_sa_instance_state']
 
     def __getattribute__(self, name):
         if name in dict.keys(self):
