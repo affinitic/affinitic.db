@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.9.2 (unreleased)
-------------------
+0.10 (2014-06-16)
+-----------------
 
 - Deferred the import for deprecated table definitions
 
