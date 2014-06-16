@@ -145,9 +145,12 @@ def initialize_defered_mappers(metadata):
         del metadata.tables[tname]
 
 
-def deprecated_table_definition(replacement):
+def deprecated_table_definition(path):
     def outer(oldfun):
         def inner(*args, **kwargs):
+            module_path, name = path.split(':')
+            module = __import__(module_path, {}, {}, ['*'])
+            replacement = getattr(module, name)
             if zope.deprecation.__show__():
                 warnings.warn('The function is deprecated, you should use the mapper %s like this: %s.__table__' % (replacement, replacement.__name__),
                               DeprecationWarning, 2)
