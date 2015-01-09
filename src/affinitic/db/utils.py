@@ -62,22 +62,27 @@ def get_fk_with_schema(table):
     return fk_list
 
 
-def initialize_declarative_mappers(declarativebase, metadata, reflection=True,
-                                   relation=True):
+def initialize_declarative_mappers(declarative_metadata, metadata,
+                                   reflection=True, relation=True):
+    # Backward compatibility
+    if not hasattr(declarative_metadata, 'tables'):
+        declarative_metadata = declarative_metadata.metadata
+        warnings.warn('Please provide the metadata instead of the '
+                      'DeclarativeBase class', DeprecationWarning, 2)
     # Loops on the mapper for the relations
     while True:
-        before_length = len(declarativebase.metadata.tables)
-        for mapper in declaratives_mappers(declarativebase.metadata):
+        before_length = len(declarative_metadata.tables)
+        for mapper in declaratives_mappers(declarative_metadata):
             if relation is False and mapper.has_active_relation() is False:
                 mapper._relations_state = 'INACTIVE'
             elif mapper._relations_state == 'INACTIVE':
                 mapper._relations_state = None
             mapper.init_relations()
-        if before_length == len(declarativebase.metadata.tables):
+        if before_length == len(declarative_metadata.tables):
             break
 
     # Avoid troubles with sqlite and the schemas
-    tables = dict(declarativebase.metadata.tables)
+    tables = dict(declarative_metadata.tables)
     if isinstance(metadata.bind.dialect, SQLiteDialect):
         tables = remove_schema(tables)
 
