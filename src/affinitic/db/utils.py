@@ -146,8 +146,11 @@ def initialize_defered_mappers(metadata):
             mapper.__declare_last__()
         if hasattr(mapper, '_create_relations'):
             mapper._create_relations()
+    # Avoid an error with the immutabledict from SA 0.8
+    tables = dict(metadata.tables)
     for tname in ignored_tables:
-        del metadata.tables[tname]
+        del tables[tname]
+    metadata.tables = tables
 
 
 def deprecated_table_definition(path):

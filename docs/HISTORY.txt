@@ -1,10 +1,16 @@
 Changelog
 =========
 
-0.10.1 (unreleased)
+0.10.2 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+0.10.1 (2014-09-16)
+-------------------
+
+- Avoid an error with the immutabledict from SA 0.8
 
 
 0.10 (2014-06-16)
