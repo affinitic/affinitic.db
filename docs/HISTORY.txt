@@ -4,7 +4,8 @@ Changelog
 0.10.2 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Improve the initialization of the declarative mappers
+  [mpeeters]
 
 
 0.10.1 (2014-09-16)
