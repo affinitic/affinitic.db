@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.10.2 (unreleased)
+0.10.2 (2015-01-13)
 -------------------
 
 - Improve the initialization of the declarative mappers
