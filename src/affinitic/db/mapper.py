@@ -313,11 +313,21 @@ class MappedClassBase(object):
                 raise ValueError('Unknown relation "%s" for the table "%s"' % (
                     relation, cls.__tablename__))
             relation_definition = cls._get_relation(relation)
-            setattr(cls, relation, relation_definition[relation])
+            rel = relation_definition[relation]
+            if cls._has_property(relation) and rel.backref:
+                if rel.argument._has_property(rel.backref.key):
+                    rel.backref = None
+            setattr(cls, relation, rel)
+
         # Removes the active relations after the creation to avoid problems
         # with the redeclaration of the mapper
         cls._active_relations = []
         cls._relations_state = 'CREATED'
+
+    @classmethod
+    def _has_property(cls, name):
+        """Check if the current mapper have the given property"""
+        return cls.__mapper__.get_property(name, raiseerr=False) is not None
 
     @classmethod
     def _get_relations(cls):
