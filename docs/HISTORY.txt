@@ -4,7 +4,12 @@ Changelog
 0.10.3 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- By default try to create the session from the engine associated to
+  the mapper.
+  [mpeeters]
+
+- Avoid an error when the backref is already defined on the mapper.
+  [mpeeters]
 
 
 0.10.2 (2015-01-13)
