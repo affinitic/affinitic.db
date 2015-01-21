@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sqlalchemy as sa
+from sqlalchemy import __version__ as sa_version
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
 from sqlalchemy.orm import sessionmaker
@@ -333,8 +334,12 @@ class MappedClassBase(object):
 
     @classmethod
     def _has_property(cls, name):
-        """Check if the current mapper have the given property"""
-        return cls.__mapper__.get_property(name, raiseerr=False) is not None
+        """Check if the related mapper has the given property"""
+        mapper = cls.__mapper__
+        if sa_version.startswith('0.4'):
+            return mapper.get_property(name, raiseerr=False) is not None
+        else:
+            return mapper.has_property(name)
 
     @classmethod
     def _get_relations(cls):
