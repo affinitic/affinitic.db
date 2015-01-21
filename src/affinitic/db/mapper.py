@@ -2,6 +2,7 @@
 import sqlalchemy as sa
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
+from sqlalchemy.orm import sessionmaker
 from affinitic.db.utils import (disable_sa_deprecation_warnings,
                                 enable_sa_deprecation_warnings,
                                 engine_type)
@@ -160,6 +161,12 @@ class MappedClassBase(object):
 
     @classmethod
     def _session(cls):
+        if cls.__table__.bind:
+            return sessionmaker(bind=cls.__table__.bind)()
+        return cls._default_session()
+
+    @classmethod
+    def _default_session(cls):
         raise NotImplementedError
 
     @property
