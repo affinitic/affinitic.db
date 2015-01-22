@@ -204,7 +204,7 @@ class MappedClassBase(object):
         return url.database
 
     @combomethod
-    def session(param):
+    def get_session(param):
         if isinstance(param, MappedClassBase):
             obj_session = object_session(param)
             if obj_session is not None:
@@ -220,6 +220,10 @@ class MappedClassBase(object):
                 warnings.warn('The database utility %s does not exist'
                               % dbname, Warning, 2)
         return cls._default_session()
+
+    @property
+    def session(self):
+        return self.get_session()
 
     def update(self, flush=True, commit=False):
         """ Update the current instance into the session """
