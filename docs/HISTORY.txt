@@ -4,7 +4,7 @@ Changelog
 0.10.3 (unreleased)
 -------------------
 
-- By default try to create the session from the engine associated to
+- Try to get the session for the database of the engine associated to
   the mapper.
   [mpeeters]
 
