@@ -4,6 +4,7 @@ import warnings
 from sqlalchemy import __version__ as sa_version
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
+from zope.component.interfaces import ComponentLookupError
 from affinitic.db.utils import (disable_sa_deprecation_warnings,
                                 enable_sa_deprecation_warnings,
                                 engine_type)
@@ -165,14 +166,14 @@ class MappedClassBase(object):
         if cls.__table__.bind:
             dbname = cls._get_connector_name(cls.__table__.bind)
             try:
-                return cls._default_session(name=dbname.lower())
-            except:
+                return cls._default_session(dbname=dbname.lower())
+            except ComponentLookupError:
                 warnings.warn('The database utility %s does not exist'
                               % dbname, Warning, 2)
         return cls._default_session()
 
     @classmethod
-    def _default_session(cls, name=None):
+    def _default_session(cls, dbname=None):
         raise NotImplementedError
 
     @classmethod
