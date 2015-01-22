@@ -4,6 +4,12 @@ Changelog
 0.10.3 (unreleased)
 -------------------
 
+- Avoid catching too many exception in engine lookup code
+  [mpeeters]
+
+- Add get_session() method (classmethod and instance method) on the mapper
+  [mpeeters, jfroche]
+
 - Try to get the session for the database of the engine associated to
   the mapper.
   [mpeeters]
