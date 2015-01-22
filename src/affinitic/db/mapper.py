@@ -164,6 +164,7 @@ class MappedClassBase(object):
 
     @classmethod
     def _session(cls):
+        warnings.warn('Please use session() instead', DeprecationWarning, 2)
         if cls.__table__.bind:
             dbname = cls._get_connector_name(cls.__table__.bind)
             try:
