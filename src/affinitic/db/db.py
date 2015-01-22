@@ -83,19 +83,21 @@ class DB(grok.GlobalUtility):
         self._checkMappers()
         if self.persistentSession and self._session:
             return self._session
+        sess = self.new_session(self.engine)
+        if self.persistentSession:
+            self._session = sess
+        return sess
+
+    def new_session(self, engine):
         if SA_0_5_andmore:
             extension = None
             if self.withZope:
                 extension = ZopeTransactionExtension()
-            sess = sessionmaker(bind=self.engine, autoflush=False,
-                                extension=extension,
-                                )()
+            return sessionmaker(bind=engine, autoflush=False,
+                                extension=extension)()
         else:
-            sess = sessionmaker(bind=self.engine, autoflush=False,
+            return sessionmaker(bind=engine, autoflush=False,
                                 transactional=True)()
-        if self.persistentSession:
-            self._session = sess
-        return sess
 
     @property
     def connection(self):
