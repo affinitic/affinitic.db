@@ -353,7 +353,8 @@ class MappedClassBase(object):
             relation_definition = cls._get_relation(relation)
             rel = relation_definition[relation]
             if cls._has_property(relation) and rel.backref:
-                if rel.argument._has_property(rel.backref.key):
+                key = cls._get_backref_key(rel.backref)
+                if rel.argument._has_property(key):
                     rel.backref = None
             setattr(cls, relation, rel)
 
@@ -361,6 +362,13 @@ class MappedClassBase(object):
         # with the redeclaration of the mapper
         cls._active_relations = []
         cls._relations_state = 'CREATED'
+
+    @classmethod
+    def _get_backref_key(cls, backref):
+        """Return the backref key for a given backref relation"""
+        if hasattr(backref, 'key'):
+            return backref.key
+        return isinstance(backref, str) and backref or backref[0]
 
     @classmethod
     def _has_property(cls, name):
