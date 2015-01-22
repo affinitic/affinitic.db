@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import sqlalchemy as sa
+import warnings
 from sqlalchemy import __version__ as sa_version
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.orm import object_session
-from sqlalchemy.orm import sessionmaker
 from affinitic.db.utils import (disable_sa_deprecation_warnings,
                                 enable_sa_deprecation_warnings,
                                 engine_type)
@@ -163,12 +163,42 @@ class MappedClassBase(object):
     @classmethod
     def _session(cls):
         if cls.__table__.bind:
-            return sessionmaker(bind=cls.__table__.bind)()
+            dbname = cls._get_connector_name(cls.__table__.bind)
+            try:
+                return cls._default_session(name=dbname.lower())
+            except:
+                warnings.warn('The database utility %s does not exist'
+                              % dbname, Warning, 2)
         return cls._default_session()
 
     @classmethod
-    def _default_session(cls):
+    def _default_session(cls, name=None):
         raise NotImplementedError
+
+    @classmethod
+    def _get_connector_name(cls, engine):
+        """Return the database name from an engine"""
+        me = getattr(cls, '_get_connector_name_%s' % engine.url.drivername)
+        return me(engine.url)
+
+    @classmethod
+    def _get_connector_name_sqlite(cls, url):
+        """Return the database name for a given sqlite engine url"""
+        parts = url.database.split('/')
+        dbname = parts[-1]
+        if parts[-2].endswith('testdb'):
+            return dbname[0:-9]
+        return dbname[0:-3]
+
+    @classmethod
+    def _get_connector_name_oracle(cls, url):
+        """Return the database name for a given oracle engine url"""
+        return url.host
+
+    @classmethod
+    def _get_connector_name_postgres(cls, url):
+        """Return the database name for a given postgres engine url"""
+        return url.database
 
     @property
     def session(self):
