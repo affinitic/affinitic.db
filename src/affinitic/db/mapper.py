@@ -7,7 +7,8 @@ from sqlalchemy.orm import object_session
 from zope.component.interfaces import ComponentLookupError
 from affinitic.db.utils import (disable_sa_deprecation_warnings,
                                 enable_sa_deprecation_warnings,
-                                engine_type)
+                                engine_type,
+                                combomethod)
 
 
 class Proxy(dict):
@@ -201,12 +202,23 @@ class MappedClassBase(object):
         """Return the database name for a given postgres engine url"""
         return url.database
 
-    @property
-    def session(self):
-        obj_session = object_session(self)
-        if obj_session is not None:
-            return obj_session
-        return self.__class__._session()
+    @combomethod
+    def session(param):
+        if isinstance(param, MappedClassBase):
+            obj_session = object_session(param)
+            if obj_session is not None:
+                return obj_session
+            cls = param.__class__
+        else:
+            cls = param
+        if cls.__table__.bind:
+            dbname = cls._get_connector_name(cls.__table__.bind)
+            try:
+                return cls._default_session(dbname=dbname.lower())
+            except:
+                warnings.warn('The database utility %s does not exist'
+                              % dbname, Warning, 2)
+        return cls._default_session()
 
     def update(self, flush=True, commit=False):
         """ Update the current instance into the session """

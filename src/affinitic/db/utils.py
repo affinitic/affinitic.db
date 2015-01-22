@@ -186,3 +186,41 @@ def engine_type(engine):
         return 'sqlite'
     else:
         raise ValueError('Unknown dialect')
+
+
+# http://stackoverflow.com/questions/12274814/functools-wraps-for-python-2-4
+WRAPPER_ASSIGNMENTS = ('__module__', '__name__', '__doc__')
+WRAPPER_UPDATES = ('__dict__',)
+
+def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
+    def partial(func, *args, **kwds):
+        return lambda *fargs, **fkwds: func(*(args+fargs), **dict(kwds,**fkwds))
+
+    def update_wrapper(wrapper, wrapped, assigned=WRAPPER_ASSIGNMENTS,
+                       updated=WRAPPER_UPDATES):
+        for attr in assigned:
+            setattr(wrapper, attr, getattr(wrapped, attr))
+        for attr in updated:
+            getattr(wrapper, attr).update(getattr(wrapped, attr, {}))
+        return wrapper
+    return partial(update_wrapper, wrapped=wrapped,
+                   assigned=assigned, updated=updated)
+
+
+class combomethod(object):
+    """
+    Decoractor that enables us to define a classmethod and an instance method
+    with the same name
+    """
+
+    def __init__(self, method):
+        self.method = method
+
+    def __get__(self, obj=None, objtype=None):
+        @wraps(self.method)
+        def _wrapper(*args, **kwargs):
+            if obj is not None:
+                return self.method(obj, *args, **kwargs)
+            else:
+                return self.method(objtype, *args, **kwargs)
+        return _wrapper
