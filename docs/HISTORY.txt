@@ -4,7 +4,8 @@ Changelog
 0.10.4 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Avoid an error with non declarative mapper
+  [mpeeters]
 
 
 0.10.3 (2015-01-22)
