@@ -165,7 +165,7 @@ class MappedClassBase(object):
     @classmethod
     def _session(cls):
         warnings.warn('Please use session() instead', DeprecationWarning, 2)
-        if cls.__table__.bind:
+        if hasattr(cls, '__table__') and cls.__table__.bind:
             dbname = cls._get_connector_name(cls.__table__.bind)
             try:
                 return cls._default_session(dbname=dbname.lower())
@@ -212,7 +212,7 @@ class MappedClassBase(object):
             cls = param.__class__
         else:
             cls = param
-        if cls.__table__.bind:
+        if hasattr(cls, '__table__') and cls.__table__.bind:
             dbname = cls._get_connector_name(cls.__table__.bind)
             try:
                 return cls._default_session(dbname=dbname.lower())
