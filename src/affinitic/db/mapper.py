@@ -189,7 +189,7 @@ class MappedClassBase(object):
         """Return the database name for a given sqlite engine url"""
         parts = url.database.split('/')
         dbname = parts[-1]
-        if parts[-2].endswith('testdb'):
+        if len(parts) > 1 and parts[-2].endswith('testdb'):
             return dbname[0:-9]
         return dbname[0:-3]
 
