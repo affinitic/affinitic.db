@@ -4,7 +4,8 @@ Changelog
 0.10.5 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix an issue with sqlite databases stored in memory
+  [mpeeters]
 
 
 0.10.4 (2015-01-26)
