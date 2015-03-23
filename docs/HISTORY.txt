@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.10.5 (unreleased)
+0.10.5 (2015-03-23)
 -------------------
 
 - Fix an issue with sqlite databases stored in memory
