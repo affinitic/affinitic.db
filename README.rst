@@ -10,4 +10,4 @@ This package was developed by `Affinitic team <https://github.com/affinitic>`_.
    :alt: Affinitic website
    :target: http://www.affinitic.be
 
-``templer.affinitic`` is licensed under GNU General Public License, version 2.
+``affinitic.db`` is licensed under GNU General Public License, version 2.
