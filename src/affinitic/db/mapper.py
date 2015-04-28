@@ -164,7 +164,8 @@ class MappedClassBase(object):
 
     @classmethod
     def _session(cls):
-        warnings.warn('Please use session() instead', DeprecationWarning, 2)
+        warnings.warn('Please use session property instead',
+                      DeprecationWarning, 2)
         if hasattr(cls, '__table__') and cls.__table__.bind:
             dbname = cls._get_connector_name(cls.__table__.bind)
             try:
