@@ -4,7 +4,8 @@ Changelog
 0.10.6 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Give the session on first, count, get, exists classmethod
+  [francois]
 
 
 0.10.5 (2015-03-23)
