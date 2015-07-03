@@ -281,8 +281,9 @@ class MappedClassBase(object):
         return operator(*filters)
 
     @classmethod
-    def exists(cls, **kwargs):
-        session = cls._session()
+    def exists(cls, session=None, **kwargs):
+        if not session:
+            session = cls._session()
         if cls._engine_type() == 'oracle':
             # oracle doesn't handle 'select from ...' queries
             return session.query(cls).filter('rownum = 1').filter(cls._build_filter(**kwargs)).count() == 1
@@ -292,8 +293,9 @@ class MappedClassBase(object):
         return session.query(sa.exists().where(cls._build_filter(**kwargs))).scalar()
 
     @classmethod
-    def get(cls, options=[], order_by=[], **kwargs):
-        session = cls._session()
+    def get(cls, options=[], order_by=[], session=None, **kwargs):
+        if not session:
+            session = cls._session()
         query = session.query(cls)
         query = query.options(options)
         if order_by:
@@ -304,8 +306,9 @@ class MappedClassBase(object):
         return query.filter(cls._build_filter(**kwargs)).all()
 
     @classmethod
-    def count(cls, options=[], **kwargs):
-        session = cls._session()
+    def count(cls, options=[], session=None, **kwargs):
+        if not session:
+            session = cls._session()
         query = session.query(cls)
         query = query.options(options)
         return query.filter(cls._build_filter(**kwargs)).count()
@@ -313,8 +316,9 @@ class MappedClassBase(object):
     sa_get = get
 
     @classmethod
-    def first(cls, options=[], order_by=[], **kwargs):
-        session = cls._session()
+    def first(cls, options=[], order_by=[], session=None, **kwargs):
+        if not session:
+            session = cls._session()
         query = session.query(cls)
         query = query.options(options)
         if order_by:
