@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.10.6 (unreleased)
+0.10.6 (2015-07-03)
 -------------------
 
 - Give the session on first, count, get, exists classmethod
