@@ -4,7 +4,9 @@ Changelog
 0.10.7 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add a verification to avoid conflict when two tables have the same schema
+  and name on two separate databases
+  [mpeeters]
 
 
 0.10.6 (2015-07-03)

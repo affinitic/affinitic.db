@@ -94,6 +94,8 @@ def initialize_declarative_mappers(declarative_metadata, metadata,
     metadata.tables = immutabledict(new_tables)
     for mapper in declaratives_mappers(metadata):
         # no reflection on sqlite table
+        if verify_mapper(mapper, metadata) is False:
+            continue
         if reflection and \
            not isinstance(metadata.bind.dialect, SQLiteDialect) and \
            issubclass(mapper, DeferredReflection):
@@ -138,6 +140,8 @@ def initialize_defered_mappers(metadata):
     ignored_tables = []
     for mapper in declaratives_mappers(metadata):
         # http://docs.sqlalchemy.org/en/rel_0_7/orm/extensions/declarative.html#declare-last
+        if verify_mapper(mapper, metadata) is False:
+            continue
         if mapper._create_table is False:
             tname = '.'.join([e for e in [mapper.__table__.schema,
                                           mapper.__table__.name] if e])
@@ -151,6 +155,13 @@ def initialize_defered_mappers(metadata):
     for tname in ignored_tables:
         del tables[tname]
     metadata.tables = tables
+
+
+def verify_mapper(mapper, metadata):
+    """Ensure that the mapper is related to the given metadata"""
+    tname = '.'.join([e for e in [mapper.__table__.schema,
+                                  mapper.__table__.name] if e])
+    return metadata.tables.get(tname) == mapper.__table__
 
 
 def deprecated_table_definition(path):
