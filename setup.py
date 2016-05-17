@@ -28,6 +28,7 @@ setup(name='affinitic.db',
           'sqlalchemy',
           'pysqlite',
           'grokcore.component',
+          'zope2',
           'zope.deprecation',
           'zope.security',
           'zope.sqlalchemy',
@@ -35,6 +36,7 @@ setup(name='affinitic.db',
       ],
       extras_require=dict(
           caching=['dogpile.cache'],
+          test=['unittest2'],
       ),
       entry_points={
-          'console_scripts': ['test = affinitic.db.tests.runalltests:main']})
+          'console_scripts': []})
