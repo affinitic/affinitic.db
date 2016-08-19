@@ -270,7 +270,7 @@ class MappedClassBase(object):
 
     @classmethod
     def _engine_type(cls):
-        return engine_type(cls._session().bind)
+        return engine_type(cls.get_session().bind)
 
     @classmethod
     def _build_filter(cls, operator=sa.and_, **kwargs):
@@ -283,7 +283,7 @@ class MappedClassBase(object):
     @classmethod
     def exists(cls, session=None, **kwargs):
         if not session:
-            session = cls._session()
+            session = cls.get_session()
         if cls._engine_type() == 'oracle':
             # oracle doesn't handle 'select from ...' queries
             return session.query(cls).filter('rownum = 1').filter(cls._build_filter(**kwargs)).count() == 1
@@ -295,7 +295,7 @@ class MappedClassBase(object):
     @classmethod
     def get(cls, options=[], order_by=[], session=None, **kwargs):
         if not session:
-            session = cls._session()
+            session = cls.get_session()
         query = session.query(cls)
         query = query.options(options)
         if order_by:
@@ -308,7 +308,7 @@ class MappedClassBase(object):
     @classmethod
     def count(cls, options=[], session=None, **kwargs):
         if not session:
-            session = cls._session()
+            session = cls.get_session()
         query = session.query(cls)
         query = query.options(options)
         return query.filter(cls._build_filter(**kwargs)).count()
@@ -318,7 +318,7 @@ class MappedClassBase(object):
     @classmethod
     def first(cls, options=[], order_by=[], session=None, **kwargs):
         if not session:
-            session = cls._session()
+            session = cls.get_session()
         query = session.query(cls)
         query = query.options(options)
         if order_by:
@@ -431,7 +431,7 @@ class MappedClassBase(object):
     def truncate(cls, restart=False):
         """ Delete all from table """
         if cls._engine_type() == 'pg':
-            sess = cls._session()
+            sess = cls.get_session()
             tablename = cls.__tablename__
             if cls.__table__.schema is not None:
                 tablename = '%s.%s' % (cls.__table__.schema, tablename)
