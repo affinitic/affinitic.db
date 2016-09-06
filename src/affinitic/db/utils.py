@@ -150,6 +150,10 @@ def initialize_defered_mappers(metadata):
             mapper.__declare_last__()
         if hasattr(mapper, '_create_relations'):
             mapper._create_relations()
+    # Fix defaults for tests
+    if metadata.bind.name == 'sqlite':
+        if sqlalchemy.__version__.startswith('0.4'):
+            set_sqlite_defaults(metadata)
     # Avoid an error with the immutabledict from SA 0.8
     tables = dict(metadata.tables)
     for tname in ignored_tables:
@@ -236,3 +240,12 @@ class combomethod(object):
             else:
                 return self.method(objtype, *args, **kwargs)
         return _wrapper
+
+
+def set_sqlite_defaults(metadata):
+    for mapper in declaratives_mappers(metadata):
+        for col in mapper.__table__.columns:
+            default = getattr(col, 'default', None)
+            if isinstance(default, sqlalchemy.PassiveDefault):
+                default_value = {'true': True, 'false': False}.get(default.arg)
+                col.default = sqlalchemy.ColumnDefault(default_value)
