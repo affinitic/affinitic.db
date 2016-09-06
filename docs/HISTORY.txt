@@ -4,7 +4,11 @@ Changelog
 0.10.8 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix default values for tests (sqlite)
+  [mpeeters]
+
+- Fix DeprecationWarning : #7842
+  [francois]
 
 
 0.10.7 (2016-08-16)
