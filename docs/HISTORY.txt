@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.10.8 (unreleased)
+0.10.8 (2016-09-06)
 -------------------
 
 - Fix default values for tests (sqlite)
