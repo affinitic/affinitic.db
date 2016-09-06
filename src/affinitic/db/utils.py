@@ -247,5 +247,6 @@ def set_sqlite_defaults(metadata):
         for col in mapper.__table__.columns:
             default = getattr(col, 'default', None)
             if isinstance(default, sqlalchemy.PassiveDefault):
-                default_value = {'true': True, 'false': False}.get(default.arg)
+                default_mapping = {'true': True, 'false': False}
+                default_value = default_mapping.get(default.arg, default.arg)
                 col.default = sqlalchemy.ColumnDefault(default_value)
