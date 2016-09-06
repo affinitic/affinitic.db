@@ -203,9 +203,10 @@ def engine_type(engine):
 WRAPPER_ASSIGNMENTS = ('__module__', '__name__', '__doc__')
 WRAPPER_UPDATES = ('__dict__',)
 
+
 def wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     def partial(func, *args, **kwds):
-        return lambda *fargs, **fkwds: func(*(args+fargs), **dict(kwds,**fkwds))
+        return lambda *fargs, **fkwds: func(*(args + fargs), **dict(kwds, **fkwds))
 
     def update_wrapper(wrapper, wrapped, assigned=WRAPPER_ASSIGNMENTS,
                        updated=WRAPPER_UPDATES):
