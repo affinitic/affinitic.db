@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.10.9 (unreleased)
+0.10.9 (2016-10-10)
 -------------------
 
 - Remove zope2 in the install_requires list : #8705
