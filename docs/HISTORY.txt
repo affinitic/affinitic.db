@@ -4,7 +4,8 @@ Changelog
 0.10.9 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Remove zope2 in the install_requires list : #8705
+  [francois]
 
 
 0.10.8 (2016-09-06)
