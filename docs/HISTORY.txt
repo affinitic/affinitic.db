@@ -4,7 +4,8 @@ Changelog
 0.10.10 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Add limit param to 'get' function arsia #9404
+  [schminitz]
 
 
 0.10.9 (2016-10-10)
