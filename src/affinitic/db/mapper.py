@@ -293,7 +293,7 @@ class MappedClassBase(object):
         return session.query(sa.exists().where(cls._build_filter(**kwargs))).scalar()
 
     @classmethod
-    def get(cls, options=[], order_by=[], session=None, **kwargs):
+    def get(cls, options=[], order_by=[], limit=None, session=None, **kwargs):
         if not session:
             session = cls.get_session()
         query = session.query(cls)
@@ -303,6 +303,8 @@ class MappedClassBase(object):
                 query = query.order_by(*order_by)
             else:
                 query = query.order_by(order_by)
+        if limit:
+            query = query.limit(limit)
         return query.filter(cls._build_filter(**kwargs)).all()
 
     @classmethod
