@@ -20,8 +20,8 @@ from zope.sqlalchemy import ZopeTransactionExtension
 
 
 SA_0_5_andmore = sqlalchemy.__version__ == 'svn' \
-    or (int(sqlalchemy.__version__.split('.')[:2][0]) >= 0
-        and int(sqlalchemy.__version__.split('.')[:2][1]) >= 5)
+    or (int(sqlalchemy.__version__.split('.')[:2][0]) >= 0 and
+        int(sqlalchemy.__version__.split('.')[:2][1]) >= 5)
 
 
 class DB(grok.GlobalUtility):
