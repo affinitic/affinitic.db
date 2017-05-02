@@ -64,10 +64,10 @@ class DB(grok.GlobalUtility):
         if not hasattr(self, 'metadata'):
             self.connect()
         classImplements(MetaData, IMetadata)
-        notify(self.notifyInterface(self.metadata))
         if self.createAll:
             self.metadata.create_all(checkfirst=True)
         self.configuredMappers = True
+        notify(self.notifyInterface(self.metadata))
 
     @property
     def url(self):
