@@ -4,6 +4,9 @@ Changelog
 0.10.10 (unreleased)
 --------------------
 
+- Call the notifier after creating the mappers : #9632
+  [francois]
+
 - Add limit param to 'get' function arsia #9404
   [schminitz]
 
