@@ -4,7 +4,8 @@ Changelog
 0.10.11 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Revert: Call the notifier after creating the mappers : #9632
+  [francois]
 
 
 0.10.10 (2017-05-02)
