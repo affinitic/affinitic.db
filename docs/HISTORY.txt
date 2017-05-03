@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.10.11 (unreleased)
+0.10.11 (2017-05-03)
 --------------------
 
 - Revert: Call the notifier after creating the mappers : #9632
