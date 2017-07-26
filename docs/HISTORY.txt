@@ -4,7 +4,9 @@ Changelog
 0.10.12 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Add the possibility to define engine options and reduce the size and the
+  overflow of pool for PostgreSQL : #9853
+  [mpeeters]
 
 
 0.10.11 (2017-05-03)

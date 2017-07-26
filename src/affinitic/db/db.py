@@ -35,6 +35,7 @@ class DB(grok.GlobalUtility):
     _session = None
     persistentSession = False
     withZope = False
+    engine_options = {}
 
     def __init__(self):
         self.configuredMappers = False
@@ -54,10 +55,12 @@ class DB(grok.GlobalUtility):
             self.engine = create_engine(self.url,
                                         convert_unicode=True,
                                         echo=self.verbose,
-                                        encoding=self.encoding)
+                                        encoding=self.encoding,
+                                        **self.engine_options)
         else:
             self.engine = create_engine(self.url,
-                                        echo=self.verbose)
+                                        echo=self.verbose,
+                                        **self.engine_options)
         self.metadata = MetaData(self.engine)
 
     def setMappers(self):

@@ -21,6 +21,10 @@ class PGDB(DB):
     notifyInterface = PGDBInitialized
     passFile = 'pgpass'
     db = None
+    engine_options = {
+        'pool_size': 3,
+        'max_overflow': 6,
+    }
 
     @property
     def url(self):
