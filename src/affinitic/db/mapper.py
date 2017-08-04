@@ -123,6 +123,8 @@ class MappedClassBase(object):
     __allow_access_to_unprotected_subobjects__ = 1
     _relations_state = 'UNKNOWN'
     _create_table = True
+    _table_type = 'data'
+    _table_data_file = None
 
     def __init__(self, **kw):
         """ accepts keywords arguments used for initialization of

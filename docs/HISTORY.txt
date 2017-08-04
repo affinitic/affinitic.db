@@ -4,7 +4,12 @@ Changelog
 0.10.13 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Add mapper properties `_table_type` to categorized mappers : #6507 (Affinitic)
+  [mpeeters]
+
+- Add mapper property `_table_data_file` for a filepath to a sql file that
+  contains default values : #6507 (Affinitic)
+  [mpeeters]
 
 
 0.10.12 (2017-07-26)
