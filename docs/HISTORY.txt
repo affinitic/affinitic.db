@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.10.13 (unreleased)
+0.10.13 (2017-08-07)
 --------------------
 
 - Add mapper properties `_table_type` to categorized mappers : #6507 (Affinitic)
