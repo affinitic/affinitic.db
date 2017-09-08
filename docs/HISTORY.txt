@@ -4,7 +4,8 @@ Changelog
 0.10.14 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Avoid warnings with db name : #6673 (Affinitic)
+  [laz]
 
 
 0.10.13 (2017-08-07)

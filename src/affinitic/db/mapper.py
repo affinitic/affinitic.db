@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 import sqlalchemy as sa
 import warnings
 from sqlalchemy import __version__ as sa_version
@@ -9,6 +10,8 @@ from affinitic.db.utils import (disable_sa_deprecation_warnings,
                                 enable_sa_deprecation_warnings,
                                 engine_type,
                                 combomethod)
+
+logger = logging.getLogger("affinitic.db")
 
 
 class Proxy(dict):
@@ -173,8 +176,8 @@ class MappedClassBase(object):
             try:
                 return cls._default_session(dbname=dbname.lower())
             except ComponentLookupError:
-                warnings.warn('The database utility %s does not exist'
-                              % dbname, Warning, 2)
+                logger.info('The database utility %s does not exist'
+                            % dbname, Warning, 2)
         return cls._default_session()
 
     @classmethod
@@ -220,8 +223,8 @@ class MappedClassBase(object):
             try:
                 return cls._default_session(dbname=dbname.lower())
             except:
-                warnings.warn('The database utility %s does not exist'
-                              % dbname, Warning, 2)
+                logger.info('The database utility %s does not exist'
+                            % dbname, Warning, 2)
         return cls._default_session()
 
     @property
