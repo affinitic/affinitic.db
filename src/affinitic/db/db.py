@@ -56,12 +56,20 @@ class DB(grok.GlobalUtility):
                                         convert_unicode=True,
                                         echo=self.verbose,
                                         encoding=self.encoding,
-                                        **self.engine_options)
+                                        **self.filtered_engine_options)
         else:
             self.engine = create_engine(self.url,
                                         echo=self.verbose,
-                                        **self.engine_options)
+                                        **self.filtered_engine_options)
         self.metadata = MetaData(self.engine)
+
+    @property
+    def filtered_engine_options(self):
+        """ Return the engine options that are compatible with engine """
+        options = self.engine_options
+        if 'sqlite' in self.url and 'max_overflow' in options:
+            del options['max_overflow']
+        return options
 
     def setMappers(self):
         if not hasattr(self, 'metadata'):

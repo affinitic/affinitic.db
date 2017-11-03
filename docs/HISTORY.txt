@@ -4,7 +4,8 @@ Changelog
 0.10.15 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Avoid an error with max_overflow parameter for sqlite engine
+  [mpeeters]
 
 
 0.10.14 (2017-09-08)
