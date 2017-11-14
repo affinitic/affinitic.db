@@ -4,7 +4,8 @@ Changelog
 0.10.16 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Add tools for database generation
+  [mpeeters]
 
 
 0.10.15 (2017-11-03)

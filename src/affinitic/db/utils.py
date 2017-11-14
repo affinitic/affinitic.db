@@ -250,3 +250,25 @@ def set_sqlite_defaults(metadata):
                 default_mapping = {'true': True, 'false': False}
                 default_value = default_mapping.get(default.arg, default.arg)
                 col.default = sqlalchemy.ColumnDefault(default_value)
+
+
+def get_table(fk):
+    """Return the table associate to the given foreign key"""
+    remote_column = getattr(fk, '_column', getattr(fk, 'column'))
+    return remote_column.table
+
+
+def get_tablename(obj):
+    """Return the tablename (with the schema) for the given mapper or table"""
+    if isinstance(obj, sqlalchemy.Table):
+        name = obj.name
+        if obj.schema:
+            name = '%s.%s' % (obj.schema, name)
+        return name
+    name = obj.__tablename__
+    table_args = getattr(obj, '__table_args__', {})
+    if isinstance(table_args, tuple):
+        table_args = table_args[1]
+    if table_args.get('schema'):
+        name = u'%s.%s' % (table_args['schema'], name)
+    return name
