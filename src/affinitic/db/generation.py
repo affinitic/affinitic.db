@@ -67,6 +67,8 @@ class OrderedMappers(object):
             fk_tablename = utils.get_tablename(utils.get_table(fk))
             if fk_tablename not in self._tables.keys():
                 continue
+            if utils.get_tablename(mapper) == fk_tablename:
+                continue
             self._ordered_mappers.add_dependency(
                 mapper,
                 self._tables[fk_tablename],
