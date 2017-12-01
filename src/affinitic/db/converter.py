@@ -31,21 +31,32 @@ class DefaultTypeConverter(TypeConverter):
 
 class TextTypeConverter(TypeConverter):
     grok.name('Text')
+    replacements = (
+        ("'", "''"),
+        ("%", "%%"),
+    )
 
     def convert(self, value):
         if value is None:
             return u'null'
-        replacements = (
-            ("'", "''"),
-            ("%", "%%"),
-        )
-        for replacement in replacements:
+        for replacement in self.replacements:
             value = value.replace(replacement[0], replacement[1])
         return u"'%s'" % value
 
 
 class StringTypeConverter(TextTypeConverter):
     grok.name('String')
+
+
+class OraTextTypeConverter(TextTypeConverter):
+    grok.name('Text_oracle')
+    replacements = (
+        ("'", "''"),
+    )
+
+
+class OraStringTypeConverter(OraTextTypeConverter):
+    grok.name('String_oracle')
 
 
 class DateTypeConverter(TextTypeConverter):
@@ -69,11 +80,33 @@ class DatetimeAliasTypeConverter(DateTypeConverter):
     grok.name('DateTime')
 
 
+class OraDateTypeConverter(TextTypeConverter):
+    grok.name('DATE_oracle')
+
+    def convert(self, value):
+        if value is None:
+            return u'null'
+        return "TO_DATE('%s', 'YYYY-MM-DD HH24:MI:SS')" % str(value)
+
+
+class OraDateAliasTypeConverter(OraDateTypeConverter):
+    grok.name('Date_oracle')
+
+
+class OraDatetimeTypeConverter(OraDateTypeConverter):
+    grok.name('DATETIME_oracle')
+
+
+class OraDatetimeAliasTypeConverter(OraDateTypeConverter):
+    grok.name('DateTime_oracle')
+
+
 class RowConverter(object):
 
-    def __init__(self, mapper, row):
+    def __init__(self, mapper, row, engine=None):
         self.mapper = mapper
         self.row = row
+        self.engine = engine
 
     @property
     def tablename(self):
@@ -85,10 +118,16 @@ class RowConverter(object):
 
     def get_converter(self, column):
         converter_name = column.type.__class__.__name__
-        converter = queryUtility(ITypeConverter, name=converter_name)
-        if not converter:
-            converter = getUtility(ITypeConverter, name='default')
-        return converter
+        converter_fallback = [converter_name, 'default']
+        if self.engine is not None:
+            converter_fallback.insert(
+                0,
+                '%s_%s' % (converter_name, self.engine),
+            )
+        for name in converter_fallback:
+            converter = queryUtility(ITypeConverter, name=name)
+            if converter:
+                return converter
 
     @property
     def insert_statement(self):
